@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Food Facts — Comparateur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="comparator">
+
+<a href="#main" class="skip-link">Aller au contenu principal</a>
+
+<header role="banner">
+  <div class="brand">
+    <div class="logo" aria-hidden="true">o</div>
+    <h1>Comparateur<small>Open Food Facts</small></h1>
+  </div>
+  <nav class="view-toggle" aria-label="Naviguer entre les sections">
+    <a href="community-hub.html" data-page="hub">Hub</a>
+    <a href="#" data-page="social" rel="noopener">Social Food Fact <span aria-hidden="true">↗</span><span class="sr-only">(ouvre dans un nouvel onglet)</span></a>
+    <a href="product-comparator.html" data-page="comparator">Comparateur</a>
+    <a href="https://wiki.openfoodfacts.org" target="_blank" rel="noopener" data-page="wiki">Wiki <span aria-hidden="true">↗</span><span class="sr-only">(ouvre dans un nouvel onglet)</span></a>
+  </nav>
+  <div class="header-right">
+    <div class="compare-count-pill" id="cmp-pill" role="status" aria-live="polite">
+      <span id="cmp-count">0 sélectionnés</span>
+      <button type="button" onclick="openVsModal()">Comparer →</button>
+    </div>
+    <button type="button" class="me-chip" aria-label="Ouvrir mon profil">
+      <span class="av" aria-hidden="true">A</span>
+      <span>Anna M.</span>
+    </button>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <div class="page-head">
+    <div class="page-eyebrow">Outils communauté</div>
+    <h2 class="page-title">Comparez les produits</h2>
+    <div class="page-sub">
+      Notes nutritionnelles, environnementales, niveau de transformation et prix moyens en temps réel pour les produits référencés sur Open Food Facts. Sélectionnez jusqu'à 3 produits pour un comparatif détaillé.
+    </div>
+    <div class="source-tag">
+      📊 Données : <code>OFF API v2</code> · <code>Open Prices</code> · <code>NOVA · Nutri-Score · Eco-Score</code>
+    </div>
+  </div>
+
+  <div class="search-wrap">
+    <div class="search-row">
+      <input type="search" class="search-input" id="search" placeholder="Recherchez un produit, une marque, ou scannez un code-barres…">
+      <button class="scan-btn" onclick="toast('🚧 Scanner code-barres OFF')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+        Scanner
+      </button>
+    </div>
+    <div class="cat-label">Catégories populaires</div>
+    <div class="cat-chips" id="cat-chips"></div>
+  </div>
+
+  <div class="winners" id="winners"></div>
+
+  <div class="compare-layout">
+
+    <aside class="filters">
+      <div class="filter-group">
+        <div class="filter-label">Trier par</div>
+        <div class="filter-sort">
+          <select id="sort-select">
+            <option value="nutri">Meilleur Nutri-Score</option>
+            <option value="eco">Meilleur Eco-Score</option>
+            <option value="price-asc">Prix croissant</option>
+            <option value="price-desc">Prix décroissant</option>
+            <option value="value">Meilleur rapport qualité/prix</option>
+            <option value="nova">Moins transformé (NOVA)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-label">Nutri-Score min.</div>
+        <div class="filter-letters" id="nutri-filter">
+          <button class="letter-btn active" data-ns="">Tous</button>
+          <button class="letter-btn" data-ns="a">A</button>
+          <button class="letter-btn" data-ns="b">B</button>
+          <button class="letter-btn" data-ns="c">C</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-label">Eco-Score min.</div>
+        <div class="filter-letters" id="eco-filter">
+          <button class="letter-btn active" data-es="">Tous</button>
+          <button class="letter-btn" data-es="a">A</button>
+          <button class="letter-btn" data-es="b">B</button>
+          <button class="letter-btn" data-es="c">C</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-label">Caractéristiques</div>
+        <div class="filter-checks">
+          <label class="filter-check"><input type="checkbox" data-tag="bio"> Bio <span class="ct" id="ct-bio">—</span></label>
+          <label class="filter-check"><input type="checkbox" data-tag="no-palm"> Sans huile de palme <span class="ct" id="ct-no-palm">—</span></label>
+          <label class="filter-check"><input type="checkbox" data-tag="vegan"> Vegan <span class="ct" id="ct-vegan">—</span></label>
+          <label class="filter-check"><input type="checkbox" data-tag="no-ultra"> NOVA ≤ 3 <span class="ct" id="ct-no-ultra">—</span></label>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-label">Marque</div>
+        <div class="filter-checks" id="brand-filter"></div>
+      </div>
+
+      <button class="reset-btn" onclick="resetFilters()">↻ Réinitialiser</button>
+    </aside>
+
+    <div>
+      <div class="grid-head">
+        <h3 id="grid-title">Pâtes à tartiner</h3>
+        <div class="count"><b id="result-count">0</b> produits · données mises à jour <span id="updated-time">il y a 2h</span></div>
+      </div>
+
+      <div class="product-grid" id="product-grid"></div>
+    </div>
+
+  </div>
+
+</main>
+
+<button class="float-compare" id="float-compare" onclick="openVsModal()">
+  Comparer <span class="cnt" id="float-cnt">0</span>
+</button>
+
+<!-- Product detail modal -->
+<div class="modal-backdrop" id="detail-modal">
+  <div class="modal-box" id="detail-content"></div>
+</div>
+
+<!-- VS modal -->
+<div class="modal-backdrop" id="vs-modal">
+  <div class="modal-box vs" id="vs-content"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   CATEGORIES & PRODUCTS (mock data realistic for demo)
+   En production : fetched via OFF API + Open Prices API
+   ════════════════════════════════════════════════════════════ */
+
+const CATEGORIES = [
+  { key: 'tartiner', label: 'Pâtes à tartiner', icon: '🍫', active: true },
+  { key: 'yaourts',  label: 'Yaourts nature',   icon: '🥛' },
+  { key: 'cereales', label: 'Céréales p.déj.',  icon: '🥣' },
+  { key: 'pizzas',   label: 'Pizzas surgelées', icon: '🍕' },
+  { key: 'sodas',    label: 'Sodas',            icon: '🥤' },
+  { key: 'pates',    label: 'Pâtes sèches',     icon: '🍝' },
+  { key: 'chocolats',label: 'Chocolats noirs',  icon: '🍫' },
+  { key: 'jus',      label: "Jus d'orange",     icon: '🍊' }
+];
+
+const PRODUCTS_BY_CAT = {
+  tartiner: [
+    { id:'t1', brand:'Ferrero',           name:'Nutella',                              barcode:'3017624010701', icon:'🍫', nutri:'e', eco:'d', nova:4, priceAvg:4.20, priceMin:3.50, priceMax:5.10, deltaPct:12, unit:'400g', tags:[], priceTrend:[3.75,3.80,3.85,3.90,4.00,4.10,4.15,4.20,4.20,4.20,4.25,4.20], stores:[{n:'Lidl',p:3.50},{n:'Leclerc',p:3.95},{n:'Carrefour',p:4.20},{n:'Monoprix',p:5.10}], ingredients:'Sucre, <span class="palm">huile de palme</span>, NOISETTES (13%), cacao maigre (7,4%), LAIT écrémé en poudre (6,6%), LACTOSÉRUM en poudre, émulsifiants : lécithines [SOJA], vanilline.', sugar:56.3, fat:30.9, kcal:539 },
+    { id:'t2', brand:'Rigoni di Asiago',  name:'Nocciolata Bio',                       barcode:'8001505005707', icon:'🌰', nutri:'d', eco:'b', nova:4, priceAvg:5.80, priceMin:5.20, priceMax:6.50, deltaPct:8,  unit:'350g', tags:['bio','no-palm'], priceTrend:[5.30,5.40,5.45,5.50,5.55,5.60,5.65,5.75,5.80,5.80,5.85,5.80], stores:[{n:'Naturalia',p:5.20},{n:'Biocoop',p:5.50},{n:'Monoprix Bio',p:6.50}], ingredients:'Sucre de canne *, huile de tournesol *, NOISETTES * (16%), cacao maigre * (7,5%), LAIT écrémé en poudre *, beurre de cacao *, LÉCITHINE de tournesol, vanille * (* ingrédients issus de l\'agriculture biologique).', sugar:51.0, fat:31.0, kcal:553 },
+    { id:'t3', brand:'Bjorg',             name:'Pâte à tartiner noisettes-cacao',      barcode:'3229820781020', icon:'🥜', nutri:'d', eco:'b', nova:4, priceAvg:4.50, priceMin:3.95, priceMax:5.20, deltaPct:5,  unit:'350g', tags:['bio','no-palm'], priceTrend:[4.30,4.35,4.40,4.42,4.45,4.45,4.48,4.50,4.50,4.55,4.50,4.50], stores:[{n:'Carrefour',p:3.95},{n:'Monoprix',p:4.50},{n:'Auchan',p:4.80}], ingredients:'Sucre de canne, huile de tournesol, NOISETTES (15%), cacao maigre en poudre, LAIT écrémé en poudre, émulsifiant : lécithines de tournesol.', sugar:52.0, fat:33.0, kcal:570 },
+    { id:'t4', brand:'U Bio',             name:'Pâte à tartiner amande-cacao bio',     barcode:'3256226780192', icon:'🌰', nutri:'c', eco:'a', nova:4, priceAvg:3.80, priceMin:3.20, priceMax:4.20, deltaPct:3,  unit:'350g', tags:['bio','no-palm','vegan'], priceTrend:[3.60,3.65,3.70,3.70,3.72,3.75,3.78,3.80,3.80,3.82,3.80,3.80], stores:[{n:'Système U',p:3.20},{n:'Carrefour Bio',p:3.95},{n:'Monoprix Bio',p:4.20}], ingredients:'Sucre de canne *, huile de tournesol désodorisée *, AMANDES * (16%), cacao maigre * (7%), graines de chia *, LÉCITHINE de tournesol *.', sugar:48.0, fat:30.5, kcal:550 },
+    { id:'t5', brand:'Lidl Belbake',      name:'Choco crème',                           barcode:'4056489395430', icon:'🍫', nutri:'e', eco:'e', nova:4, priceAvg:1.85, priceMin:1.50, priceMax:2.20, deltaPct:18, unit:'400g', tags:[], priceTrend:[1.45,1.50,1.55,1.55,1.60,1.65,1.70,1.75,1.78,1.80,1.85,1.85], stores:[{n:'Lidl',p:1.50},{n:'(uniquement Lidl)',p:1.85}], ingredients:'Sucre, <span class="palm">huile de palme</span>, NOISETTES (8%), <span class="palm">huile de palmiste</span>, cacao maigre, LACTOSÉRUM, émulsifiant E322 [SOJA], <span class="add">arômes artificiels</span>.', sugar:60.0, fat:33.0, kcal:560 },
+    { id:'t6', brand:'Bonneterre',        name:'Pâte à tartiner cacao-noisettes',      barcode:'3396411260121', icon:'🌰', nutri:'c', eco:'a', nova:4, priceAvg:5.20, priceMin:4.80, priceMax:6.00, deltaPct:6,  unit:'350g', tags:['bio','no-palm','vegan'], priceTrend:[4.90,4.95,5.00,5.05,5.10,5.15,5.18,5.20,5.20,5.22,5.20,5.20], stores:[{n:'Naturalia',p:4.80},{n:'Biocoop',p:5.30},{n:'La Vie Claire',p:6.00}], ingredients:'Sucre de canne *, huile de tournesol *, NOISETTES * (15%), cacao maigre * (10%), LÉCITHINE de tournesol *, vanille * en poudre.', sugar:46.0, fat:32.0, kcal:560 },
+    { id:'t7', brand:'Newtree',           name:'Pâte à tartiner Vibrant',              barcode:'5425005751523', icon:'🍫', nutri:'d', eco:'b', nova:4, priceAvg:5.50, priceMin:5.10, priceMax:6.20, deltaPct:4,  unit:'250g', tags:['no-palm','vegan'], priceTrend:[5.30,5.35,5.38,5.40,5.42,5.45,5.48,5.50,5.50,5.52,5.50,5.50], stores:[{n:'Monoprix',p:5.10},{n:'Naturalia',p:5.80},{n:'Carrefour Bio',p:6.20}], ingredients:'Sucre de canne, huile de tournesol, NOISETTES (15%), cacao en poudre (10%), guarana, vanille naturelle.', sugar:50.0, fat:34.0, kcal:580 },
+    { id:'t8', brand:'Carrefour Bio',     name:'Pâte à tartiner noisettes-cacao bio',  barcode:'3270190196792', icon:'🌰', nutri:'c', eco:'a', nova:4, priceAvg:4.10, priceMin:3.70, priceMax:4.50, deltaPct:2,  unit:'350g', tags:['bio','no-palm'], priceTrend:[4.00,4.00,4.05,4.05,4.08,4.10,4.10,4.10,4.12,4.10,4.10,4.10], stores:[{n:'Carrefour',p:3.70},{n:'Carrefour Express',p:4.50}], ingredients:'Sucre de canne *, huile de tournesol *, NOISETTES * (15%), cacao maigre *, LÉCITHINES de tournesol.', sugar:50.0, fat:31.0, kcal:560 }
+  ],
+  yaourts: [
+    { id:'y1', brand:'Danone Activia',    name:'Yaourt nature',                        barcode:'3033491102127', icon:'🥛', nutri:'a', eco:'c', nova:3, priceAvg:2.30, priceMin:2.00, priceMax:2.60, deltaPct:5,  unit:'4×125g', tags:[], priceTrend:[2.15,2.20,2.22,2.25,2.28,2.30,2.30,2.30,2.32,2.30,2.30,2.30], stores:[{n:'Lidl',p:2.00},{n:'Carrefour',p:2.30},{n:'Monoprix',p:2.60}], ingredients:'LAIT, ferments lactiques dont Bifidobacterium ActiRegularis®.', sugar:4.5, fat:3.5, kcal:69 },
+    { id:'y2', brand:'Yoplait',           name:'Yaourt nature au lait entier',         barcode:'3329770069015', icon:'🥛', nutri:'a', eco:'c', nova:3, priceAvg:1.85, priceMin:1.50, priceMax:2.10, deltaPct:3,  unit:'8×125g', tags:[], priceTrend:[1.75,1.78,1.80,1.80,1.82,1.85,1.85,1.85,1.85,1.85,1.85,1.85], stores:[{n:'Lidl',p:1.50},{n:'Auchan',p:1.85}], ingredients:'LAIT entier, ferments lactiques.', sugar:4.8, fat:3.8, kcal:71 },
+    { id:'y3', brand:'Biocoop',           name:'Yaourt nature bio au lait entier',     barcode:'3760042220148', icon:'🥛', nutri:'a', eco:'a', nova:3, priceAvg:3.20, priceMin:2.90, priceMax:3.60, deltaPct:4,  unit:'4×125g', tags:['bio'], priceTrend:[3.00,3.05,3.10,3.15,3.18,3.20,3.20,3.22,3.20,3.20,3.20,3.20], stores:[{n:'Biocoop',p:2.90},{n:'Naturalia',p:3.60}], ingredients:'LAIT entier *, ferments lactiques (* ingrédients issus de l\'agriculture biologique).', sugar:4.5, fat:3.8, kcal:70 }
+  ],
+  cereales: [
+    { id:'c1', brand:'Kellogg\'s',        name:'Frosties',                              barcode:'5050083587474', icon:'🥣', nutri:'e', eco:'d', nova:4, priceAvg:4.50, priceMin:3.90, priceMax:5.20, deltaPct:10, unit:'500g', tags:[], priceTrend:[4.10,4.15,4.20,4.25,4.30,4.35,4.40,4.45,4.50,4.50,4.50,4.50], stores:[{n:'Auchan',p:3.90},{n:'Monoprix',p:5.20}], ingredients:'Céréales 87% (riz 71%, BLÉ complet 16%), sucre, sirop d\'orge malté, sel, vitamines.', sugar:37.0, fat:0.6, kcal:381 }
+  ]
+};
+
+/* ════════════════════════════════════════════════════════════
+   STATE
+   ════════════════════════════════════════════════════════════ */
+const STORAGE = 'off-comparator-v1';
+const State = {
+  category: 'tartiner',
+  search: '',
+  sort: 'nutri',
+  minNutri: '',
+  minEco: '',
+  tags: new Set(),
+  brand: null,
+  selected: new Set()
+};
+
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem(STORAGE));
+    if (s) {
+      State.selected = new Set(s.selected || []);
+    }
+  } catch(e) {}
+}
+function saveState() {
+  localStorage.setItem(STORAGE, JSON.stringify({ selected: [...State.selected] }));
+}
+
+/* ════════════════════════════════════════════════════════════
+   HELPERS
+   ════════════════════════════════════════════════════════════ */
+const NS_RANK = { a:1, b:2, c:3, d:4, e:5 };
+const NUTRI_CAPTIONS = {
+  a:'Très bonne qualité', b:'Bonne qualité', c:'Qualité moyenne',
+  d:'Qualité médiocre', e:'Mauvaise qualité'
+};
+const ECO_CAPTIONS = {
+  a:'Très faible impact', b:'Faible impact', c:'Impact modéré',
+  d:'Impact élevé', e:'Impact très élevé'
+};
+const NOVA_CAPTIONS = {
+  1:'Aliments non transformés', 2:'Ingrédients culinaires',
+  3:'Aliments transformés', 4:'Ultra-transformés'
+};
+const TAG_LABELS = { bio:'Bio', 'no-palm':'Sans huile palme', vegan:'Vegan' };
+
+function getProducts() { return PRODUCTS_BY_CAT[State.category] || []; }
+function getCatLabel(key) { return CATEGORIES.find(c => c.key === key)?.label || key; }
+
+function filterAndSort() {
+  let list = getProducts();
+  if (State.search) {
+    const q = State.search.toLowerCase();
+    list = list.filter(p => (p.name+' '+p.brand).toLowerCase().includes(q));
+  }
+  if (State.minNutri) list = list.filter(p => NS_RANK[p.nutri] <= NS_RANK[State.minNutri]);
+  if (State.minEco)   list = list.filter(p => NS_RANK[p.eco]   <= NS_RANK[State.minEco]);
+  if (State.tags.size) {
+    list = list.filter(p => {
+      for (const t of State.tags) {
+        if (t === 'no-ultra') { if (p.nova > 3) return false; }
+        else if (!p.tags.includes(t)) return false;
+      }
+      return true;
+    });
+  }
+  if (State.brand) list = list.filter(p => p.brand === State.brand);
+
+  list.sort((a,b) => {
+    if (State.sort === 'nutri')      return NS_RANK[a.nutri] - NS_RANK[b.nutri];
+    if (State.sort === 'eco')        return NS_RANK[a.eco]   - NS_RANK[b.eco];
+    if (State.sort === 'nova')       return a.nova - b.nova;
+    if (State.sort === 'price-asc')  return a.priceAvg - b.priceAvg;
+    if (State.sort === 'price-desc') return b.priceAvg - a.priceAvg;
+    if (State.sort === 'value') {
+      const scoreA = (6 - NS_RANK[a.nutri]) / a.priceAvg;
+      const scoreB = (6 - NS_RANK[b.nutri]) / b.priceAvg;
+      return scoreB - scoreA;
+    }
+    return 0;
+  });
+  return list;
+}
+
+function pricePerKg(p) {
+  const m = p.unit.match(/(\d+)([gx]\d+g?)?/);
+  let grams = 100;
+  if (p.unit.includes('×')) {
+    const [count, weight] = p.unit.split('×');
+    grams = parseInt(count) * parseInt(weight);
+  } else {
+    grams = parseInt(p.unit.replace(/\D/g,''));
+  }
+  return (p.priceAvg / grams * 1000).toFixed(2);
+}
+
+/* ════════════════════════════════════════════════════════════
+   RENDER
+   ════════════════════════════════════════════════════════════ */
+function renderCategories() {
+  const el = document.getElementById('cat-chips');
+  el.innerHTML = CATEGORIES.map(c => `
+    <button class="cat-chip ${c.key === State.category ? 'active' : ''}" data-cat="${c.key}">
+      ${c.icon} ${c.label}
+    </button>
+  `).join('');
+  el.querySelectorAll('[data-cat]').forEach(b => {
+    b.addEventListener('click', () => {
+      if (!PRODUCTS_BY_CAT[b.dataset.cat]) {
+        toast(`🚧 Catégorie ${b.textContent.trim()} à venir`);
+        return;
+      }
+      State.category = b.dataset.cat;
+      State.brand = null;
+      document.getElementById('grid-title').textContent = getCatLabel(b.dataset.cat);
+      renderCategories();
+      renderAll();
+    });
+  });
+}
+
+function renderWinners() {
+  const list = getProducts();
+  if (!list.length) { document.getElementById('winners').innerHTML = ''; return; }
+
+  const bestNutri = [...list].sort((a,b) => NS_RANK[a.nutri] - NS_RANK[b.nutri])[0];
+  const bestPrice = [...list].sort((a,b) => a.priceAvg - b.priceAvg)[0];
+  const bestValue = [...list].sort((a,b) => ((6-NS_RANK[b.nutri])/b.priceAvg) - ((6-NS_RANK[a.nutri])/a.priceAvg))[0];
+
+  const winnerHtml = (p, type, label, eyebrowText) => `
+    <div class="winner ${type} winner-card-clickable" onclick="openDetail('${p.id}')">
+      <div class="winner-eyebrow"><b>${label}</b> ${eyebrowText}</div>
+      <div class="winner-product">
+        <div class="product-thumb">${p.icon}</div>
+        <div class="winner-info">
+          <div class="winner-brand">${p.brand}</div>
+          <div class="winner-name">${p.name}</div>
+          <div class="winner-stats">
+            <span class="nutri-badge ${p.nutri}">${p.nutri.toUpperCase()}</span>
+            <span class="eco-badge ${p.eco}">${p.eco.toUpperCase()}</span>
+            <span class="nova-badge n${p.nova}">${p.nova}</span>
+            <span class="price-tag ${type==='price'?'cheap':''}">${p.priceAvg.toFixed(2)}€</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('winners').innerHTML =
+    winnerHtml(bestNutri, 'nutri', '🏆', `Meilleur Nutri-Score · ${bestNutri.nutri.toUpperCase()}`) +
+    winnerHtml(bestPrice, 'price', '💰', `Le moins cher · ${bestPrice.priceAvg.toFixed(2)}€`) +
+    winnerHtml(bestValue, 'value', '⭐', 'Meilleur rapport qualité/prix');
+}
+
+function renderBrandFilter() {
+  const products = getProducts();
+  const brands = [...new Set(products.map(p => p.brand))];
+  const el = document.getElementById('brand-filter');
+  el.innerHTML = brands.map(b => {
+    const count = products.filter(p => p.brand === b).length;
+    return `
+      <label class="filter-check">
+        <input type="radio" name="brand" value="${b}" ${State.brand===b?'checked':''}>
+        ${b}
+        <span class="ct">${count}</span>
+      </label>
+    `;
+  }).join('') +
+  `<label class="filter-check"><input type="radio" name="brand" value="" ${!State.brand?'checked':''}>Toutes</label>`;
+
+  el.querySelectorAll('input[name=brand]').forEach(r => {
+    r.addEventListener('change', () => { State.brand = r.value || null; renderGrid(); });
+  });
+}
+
+function renderTagCounts() {
+  const all = getProducts();
+  ['bio','no-palm','vegan'].forEach(t => {
+    const ct = all.filter(p => p.tags.includes(t)).length;
+    document.getElementById('ct-'+t).textContent = ct;
+  });
+  document.getElementById('ct-no-ultra').textContent = all.filter(p => p.nova <= 3).length;
+}
+
+function renderProductCard(p) {
+  const isSelected = State.selected.has(p.id);
+  const tagsHtml = p.tags.map(t => `<span class="ptag ${t==='no-palm'?'palm':t}">${TAG_LABELS[t] || t}</span>`).join('');
+  const palmTag = !p.tags.includes('no-palm') && (p.ingredients||'').includes('palm')
+    ? '<span class="ptag palm">⚠ Huile de palme</span>' : '';
+
+  return `
+    <div class="product-card ${isSelected?'selected':''}" data-id="${p.id}">
+      <div class="product-thumb-lg">${p.icon}</div>
+      <div class="product-body">
+        <div class="product-brand">${p.brand}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-scores">
+          <span class="nutri-badge ${p.nutri}" title="Nutri-Score">${p.nutri.toUpperCase()}</span>
+          <span class="eco-badge ${p.eco}" title="Eco-Score">${p.eco.toUpperCase()}</span>
+          <span class="nova-badge n${p.nova}" title="NOVA group">${p.nova}</span>
+          <span class="score-label">${p.unit}</span>
+        </div>
+        <div class="product-tags">${tagsHtml}${palmTag}</div>
+        <div class="product-price-row">
+          <div class="product-price-info">
+            <span class="product-price-main">${p.priceAvg.toFixed(2)}€</span>
+            <span class="product-price-unit">soit ${pricePerKg(p)}€/kg</span>
+          </div>
+          <div class="product-price-meta">
+            <b>${p.priceMin.toFixed(2)}€</b>
+            chez ${p.stores[0].n}
+            <div class="product-price-delta">${p.deltaPct>0?'↗':'↘'} ${p.deltaPct}% / 12 mois</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderGrid() {
+  const list = filterAndSort();
+  document.getElementById('product-grid').innerHTML = list.map(renderProductCard).join('') || `
+    <div class="empty-results">
+      <div class="empty-results-title">Aucun résultat</div>
+      <div class="text-13">Essayez d'autres filtres ou réinitialisez.</div>
+    </div>
+  `;
+  document.getElementById('result-count').textContent = list.length;
+
+  // Wire card clicks
+  document.querySelectorAll('.product-card').forEach(c => {
+    c.addEventListener('click', e => {
+      // Cmd/Ctrl click ou shift = sélection multi
+      if (e.metaKey || e.ctrlKey || e.shiftKey) {
+        toggleSelect(c.dataset.id);
+      } else {
+        openDetail(c.dataset.id);
+      }
+    });
+  });
+
+  updateCompareUI();
+}
+
+function renderAll() {
+  renderWinners();
+  renderBrandFilter();
+  renderTagCounts();
+  renderGrid();
+}
+
+/* ════════════════════════════════════════════════════════════
+   SELECTION FOR COMPARE
+   ════════════════════════════════════════════════════════════ */
+function toggleSelect(id) {
+  if (State.selected.has(id)) {
+    State.selected.delete(id);
+  } else {
+    if (State.selected.size >= 3) {
+      toast('⚠ Maximum 3 produits à comparer');
+      return;
+    }
+    State.selected.add(id);
+    toast(`✓ Ajouté · ${State.selected.size}/3 sélectionnés`);
+  }
+  saveState();
+  renderGrid();
+}
+
+function updateCompareUI() {
+  const n = State.selected.size;
+  const pill = document.getElementById('cmp-pill');
+  const floatBtn = document.getElementById('float-compare');
+  if (n >= 2) {
+    pill.classList.add('show');
+    floatBtn.classList.add('show');
+    document.getElementById('cmp-count').textContent = `${n} sélectionnés`;
+    document.getElementById('float-cnt').textContent = n;
+  } else {
+    pill.classList.remove('show');
+    floatBtn.classList.remove('show');
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   DETAIL MODAL
+   ════════════════════════════════════════════════════════════ */
+function openDetail(id) {
+  const products = Object.values(PRODUCTS_BY_CAT).flat();
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  const isSelected = State.selected.has(id);
+
+  const sparkPath = sparklineSvg(p.priceTrend, 480, 56);
+  const tagsHtml = p.tags.map(t => `<span class="ptag ${t==='no-palm'?'palm':t}">${TAG_LABELS[t] || t}</span>`).join('');
+  const palmWarn = (p.ingredients||'').includes('palm') && !p.tags.includes('no-palm')
+    ? '<span class="ptag palm">⚠ Huile de palme détectée</span>' : '';
+
+  document.getElementById('detail-content').innerHTML = `
+    <button class="modal-close" onclick="closeDetail()">×</button>
+
+    <div class="detail-head">
+      <div class="detail-thumb">${p.icon}</div>
+      <div class="detail-info">
+        <div class="detail-brand">${p.brand}</div>
+        <div class="detail-name">${p.name}</div>
+        <div class="detail-barcode">code-barres : ${p.barcode}</div>
+        <div class="detail-tags">${tagsHtml}${palmWarn}</div>
+      </div>
+    </div>
+
+    <div class="scores-row">
+      <div class="score-card">
+        <div class="lbl">Nutri-Score</div>
+        <div class="full-scale">
+          ${['a','b','c','d','e'].map(l => `<div class="scale-letter ${l} ${l===p.nutri?'active':''}">${l.toUpperCase()}</div>`).join('')}
+        </div>
+        <div class="caption"><b>${NUTRI_CAPTIONS[p.nutri]}</b></div>
+      </div>
+      <div class="score-card">
+        <div class="lbl">Eco-Score</div>
+        <div class="full-scale">
+          ${['a','b','c','d','e'].map(l => `<div class="scale-letter ${l} ${l===p.eco?'active':''}">${l.toUpperCase()}</div>`).join('')}
+        </div>
+        <div class="caption"><b>${ECO_CAPTIONS[p.eco]}</b></div>
+      </div>
+      <div class="score-card">
+        <div class="lbl">Classification NOVA</div>
+        <div class="scale-row-nova">
+          ${[1,2,3,4].map(n => `<div class="scale-letter n${n} ${n===p.nova?'active':''}" style="background:var(--nova-${n});">${n}</div>`).join('')}
+        </div>
+        <div class="caption"><b>${NOVA_CAPTIONS[p.nova]}</b></div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">💰 Prix · 12 derniers mois</div>
+      <div class="price-evo">
+        <div class="price-evo-head">
+          <div>
+            <div class="avg">${p.priceAvg.toFixed(2)}€<span class="detail-unit"> · ${p.unit}</span></div>
+            <div class="range">Min ${p.priceMin.toFixed(2)}€ — Max ${p.priceMax.toFixed(2)}€ · ${pricePerKg(p)}€/kg</div>
+          </div>
+          <div class="delta ${p.deltaPct>0?'up':'down'}">${p.deltaPct>0?'↗':'↘'} ${p.deltaPct}% sur 1 an</div>
+        </div>
+        ${sparkPath}
+      </div>
+      <div class="store-list">
+        ${p.stores.map((s,i) => `
+          <div class="store-row ${i===0?'best':''}">
+            <span class="nm">${s.n}</span>
+            <span class="pr">${s.p.toFixed(2)}€</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">🧪 Composition · valeurs pour 100g</div>
+      <div class="nutri-grid-3">
+        <div class="nutri-box">
+          <div class="nutri-box-label">Énergie</div>
+          <div class="nutri-box-value">${p.kcal} kcal</div>
+        </div>
+        <div class="nutri-box">
+          <div class="nutri-box-label">Sucres</div>
+          <div class="nutri-box-value">${p.sugar}g</div>
+        </div>
+        <div class="nutri-box">
+          <div class="nutri-box-label">Lipides</div>
+          <div class="nutri-box-value">${p.fat}g</div>
+        </div>
+      </div>
+      <div class="ingr-list">${p.ingredients}</div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="reset-btn btn-auto" onclick="window.open('https://world.openfoodfacts.org/product/${p.barcode}','_blank')">Voir sur Open Food Facts ↗</button>
+      <button class="scan-btn" onclick="toggleSelect('${p.id}');closeDetail()">
+        ${isSelected?'✓ Sélectionné · retirer':'+ Ajouter à la comparaison'}
+      </button>
+    </div>
+  `;
+  document.getElementById('detail-modal').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detail-modal').classList.remove('open');
+}
+
+/* ════════════════════════════════════════════════════════════
+   HEAD-TO-HEAD MODAL
+   ════════════════════════════════════════════════════════════ */
+function openVsModal() {
+  if (State.selected.size < 2) {
+    toast('Sélectionnez au moins 2 produits (Ctrl+clic ou ⊕ Comparer)');
+    return;
+  }
+  const products = Object.values(PRODUCTS_BY_CAT).flat();
+  const selected = [...State.selected].map(id => products.find(p => p.id === id)).filter(Boolean);
+
+  // Compute winners per criterion
+  const bestNutri = selected.reduce((a,b) => NS_RANK[a.nutri] <= NS_RANK[b.nutri] ? a : b);
+  const bestEco   = selected.reduce((a,b) => NS_RANK[a.eco]   <= NS_RANK[b.eco]   ? a : b);
+  const bestNova  = selected.reduce((a,b) => a.nova <= b.nova ? a : b);
+  const bestPrice = selected.reduce((a,b) => a.priceAvg <= b.priceAvg ? a : b);
+  const bestSugar = selected.reduce((a,b) => a.sugar <= b.sugar ? a : b);
+
+  const verdict = computeVerdict(selected);
+
+  document.getElementById('vs-content').innerHTML = `
+    <button class="modal-close" onclick="closeVs()">×</button>
+    <div class="page-eyebrow">Comparatif détaillé</div>
+    <h2 class="modal-vs-title">
+      ${selected.map(p => p.name).join(' vs ')}
+    </h2>
+    <div class="modal-sub">
+      Comparaison sur Nutri-Score, Eco-Score, NOVA, prix moyen et composition.
+    </div>
+
+    <div class="vs-grid" style="grid-template-columns: repeat(${selected.length}, 1fr);">
+      ${selected.map(p => `
+        <div class="vs-col">
+          <div class="vs-col-head">
+            <div class="product-thumb-lg">${p.icon}</div>
+            <div class="vs-brand">${p.brand}</div>
+            <div class="vs-name">${p.name}</div>
+          </div>
+
+          <div class="vs-row">
+            <span class="k">Nutri-Score</span>
+            <span class="v ${p===bestNutri?'win':''}"><span class="nutri-badge ${p.nutri} badge-sm">${p.nutri.toUpperCase()}</span></span>
+          </div>
+          <div class="vs-row">
+            <span class="k">Eco-Score</span>
+            <span class="v ${p===bestEco?'win':''}"><span class="eco-badge ${p.eco} badge-sm">${p.eco.toUpperCase()}</span></span>
+          </div>
+          <div class="vs-row">
+            <span class="k">NOVA</span>
+            <span class="v ${p===bestNova?'win':''}"><span class="nova-badge n${p.nova} badge-sm-n">${p.nova}</span></span>
+          </div>
+          <div class="vs-row">
+            <span class="k">Prix moyen</span>
+            <span class="v ${p===bestPrice?'win':''}">${p.priceAvg.toFixed(2)}€</span>
+          </div>
+          <div class="vs-row">
+            <span class="k">€ / kg</span>
+            <span class="v">${pricePerKg(p)}€</span>
+          </div>
+          <div class="vs-row">
+            <span class="k">Sucres / 100g</span>
+            <span class="v ${p===bestSugar?'win':''}">${p.sugar}g</span>
+          </div>
+          <div class="vs-row">
+            <span class="k">Lipides / 100g</span>
+            <span class="v">${p.fat}g</span>
+          </div>
+          <div class="vs-row">
+            <span class="k">Énergie / 100g</span>
+            <span class="v">${p.kcal} kcal</span>
+          </div>
+          <div class="vs-row">
+            <span class="k">Caractéristiques</span>
+            <span class="v">${p.tags.length ? p.tags.map(t=>TAG_LABELS[t]).join(', ') : '—'}</span>
+          </div>
+          <div class="vs-row">
+            <span class="k">Évolution prix 1 an</span>
+            <span class="v ${p.deltaPct < 5 ? 'win' : ''}">${p.deltaPct>0?'+':''}${p.deltaPct}%</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="vs-verdict">
+      <b>Verdict communautaire :</b> ${verdict}
+    </div>
+
+    <div class="modal-actions-split">
+      <button class="reset-btn btn-auto" onclick="clearSelection()">Vider la sélection</button>
+      <button class="scan-btn" onclick="shareComparison()">↗ Partager au réseau</button>
+    </div>
+  `;
+  document.getElementById('vs-modal').classList.add('open');
+}
+
+function closeVs() { document.getElementById('vs-modal').classList.remove('open'); }
+
+function clearSelection() {
+  State.selected.clear();
+  saveState();
+  closeVs();
+  renderGrid();
+}
+
+function shareComparison() {
+  toast('✓ Comparatif partagé sur le forum (#Comparateur)');
+  setTimeout(closeVs, 800);
+}
+
+function computeVerdict(products) {
+  const sortedByValue = [...products].sort((a,b) => ((6-NS_RANK[b.nutri])/b.priceAvg) - ((6-NS_RANK[a.nutri])/a.priceAvg));
+  const winner = sortedByValue[0];
+  const cheapest = [...products].sort((a,b) => a.priceAvg - b.priceAvg)[0];
+  if (winner === cheapest) {
+    return `<b>${winner.name}</b> (${winner.brand}) est à la fois le moins cher et celui qui offre le meilleur rapport qualité/prix. Choix évident pour la communauté.`;
+  }
+  return `<b>${winner.name}</b> (${winner.brand}) offre le meilleur rapport Nutri-Score/prix. Si le budget prime, <b>${cheapest.name}</b> reste le plus économique mais avec une note nutritionnelle inférieure.`;
+}
+
+/* ════════════════════════════════════════════════════════════
+   SPARKLINE GENERATOR
+   ════════════════════════════════════════════════════════════ */
+function sparklineSvg(values, width, height) {
+  const max = Math.max(...values), min = Math.min(...values);
+  const range = max - min || 1;
+  const padding = 4;
+  const step = (width - padding*2) / (values.length - 1);
+  const points = values.map((v, i) => {
+    const x = padding + i * step;
+    const y = padding + (height - padding*2) * (1 - (v - min) / range);
+    return `${x},${y}`;
+  }).join(' ');
+  const areaPoints = `${padding},${height} ${points} ${padding + (values.length-1)*step},${height}`;
+  return `
+    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+      <polyline points="${areaPoints}" fill="#2D4A2B" opacity=".12"/>
+      <polyline points="${points}" fill="none" stroke="#2D4A2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      ${values.map((v, i) => {
+        const x = padding + i * step;
+        const y = padding + (height - padding*2) * (1 - (v - min) / range);
+        return `<circle cx="${x}" cy="${y}" r="${i === values.length-1 ? 3 : 1.5}" fill="${i === values.length-1 ? '#C8553D' : '#2D4A2B'}"/>`;
+      }).join('')}
+    </svg>
+  `;
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESET, FILTERS WIRING
+   ════════════════════════════════════════════════════════════ */
+function resetFilters() {
+  State.search = '';
+  State.minNutri = '';
+  State.minEco = '';
+  State.tags.clear();
+  State.brand = null;
+  State.sort = 'nutri';
+  document.getElementById('search').value = '';
+  document.getElementById('sort-select').value = 'nutri';
+  document.querySelectorAll('#nutri-filter .letter-btn').forEach(b => b.classList.toggle('active', !b.dataset.ns));
+  document.querySelectorAll('#eco-filter .letter-btn').forEach(b => b.classList.toggle('active', !b.dataset.es));
+  document.querySelectorAll('.filter-check input[type=checkbox]').forEach(c => c.checked = false);
+  renderAll();
+}
+
+/* ════════════════════════════════════════════════════════════
+   TOAST
+   ════════════════════════════════════════════════════════════ */
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastT);
+  window._toastT = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ════════════════════════════════════════════════════════════
+   INIT
+   ════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  renderCategories();
+  renderAll();
+
+  document.getElementById('search').addEventListener('input', e => {
+    State.search = e.target.value;
+    renderGrid();
+  });
+
+  document.getElementById('sort-select').addEventListener('change', e => {
+    State.sort = e.target.value;
+    renderGrid();
+  });
+
+  document.querySelectorAll('#nutri-filter .letter-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#nutri-filter .letter-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      State.minNutri = b.dataset.ns;
+      renderGrid();
+    });
+  });
+
+  document.querySelectorAll('#eco-filter .letter-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#eco-filter .letter-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      State.minEco = b.dataset.es;
+      renderGrid();
+    });
+  });
+
+  document.querySelectorAll('.filter-check input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      if (cb.checked) State.tags.add(cb.dataset.tag);
+      else State.tags.delete(cb.dataset.tag);
+      renderGrid();
+    });
+  });
+
+  // Modals close on backdrop
+  document.getElementById('detail-modal').addEventListener('click', e => {
+    if (e.target.id === 'detail-modal') closeDetail();
+  });
+  document.getElementById('vs-modal').addEventListener('click', e => {
+    if (e.target.id === 'vs-modal') closeVs();
+  });
+
+  /* ════ FILTRAGE PAR UNIVERS ════
+     Si l'utilisateur a sélectionné un univers ≠ alimentaire dans le hub,
+     on n'affiche que les catégories pertinentes de cet univers.
+  */
+  const UNIVERSE_CATEGORIES = {
+    food:     ['tartiner','yaourts','cereales','pizzas','sodas','pates','chocolats','jus'],
+    beauty:   [], // catégories cosmétiques à venir
+    petfood:  [], // catégories pet food à venir
+    products: [], // catégories ménager à venir
+    prices:   ['tartiner','yaourts','cereales','pizzas','sodas','pates','chocolats','jus']
+  };
+
+  function applyUniverseFilter() {
+    if (!window.OFFApp) return;
+    const universe = OFFApp.getActiveUniverse();
+    const allowed = UNIVERSE_CATEGORIES[universe];
+    if (!allowed || !allowed.length) {
+      // Univers sans catégories → afficher message vide
+      document.getElementById('product-grid').innerHTML = `
+        <div class="empty-state empty-state-grid">
+          <div class="empty-state-title">Comparateur ${OFFApp.universes[universe].label}</div>
+          <p>Les catégories ${OFFApp.universes[universe].short.toLowerCase()} arrivent bientôt. Pour l'instant, le comparateur est disponible pour l'univers alimentaire.</p>
+          <button type="button" class="reset-btn btn-auto-mt" onclick="OFFApp.setActiveUniverse('food');location.reload();">Basculer sur l'alimentaire</button>
+        </div>
+      `;
+      document.getElementById('result-count').textContent = '0';
+      document.getElementById('winners').innerHTML = '';
+      return;
+    }
+    if (universe === 'prices') {
+      // Mode "prix" : forcer le tri par prix croissant
+      State.sort = 'price-asc';
+      const sel = document.getElementById('sort-select');
+      if (sel) sel.value = 'price-asc';
+      renderAll();
+    }
+  }
+
+  // Appliquer au chargement et à chaque changement
+  setTimeout(applyUniverseFilter, 100);
+  if (window.OFFApp) {
+    OFFApp.onUniverseChange(() => applyUniverseFilter());
+  }
+
+  // ════ AUTO-OPEN après scan ════
+  // Si on arrive depuis le scanner du hub, ouvre directement la fiche du produit
+  try {
+    const scannedId = sessionStorage.getItem('scanned-product-id');
+    if (scannedId) {
+      sessionStorage.removeItem('scanned-product-id');
+      // Attendre que renderAll() ait peuplé le grid
+      setTimeout(() => {
+        openDetail(scannedId);
+        if (window.OFFApp?.toast) {
+          OFFApp.toast('✓ Produit scanné : ouverture de la fiche');
+        }
+      }, 300);
+    }
+  } catch (e) {}
+});
+</script>
+<script src="app.js" defer></script>
+</body>
+</html>
