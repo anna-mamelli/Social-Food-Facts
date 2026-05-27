@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Hub personnel pour la communauté Open Food Facts — alertes, missions, watchs et progression.">
+  <title>Mon hub — Open Food Facts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="hub">
+
+  <a href="#main" class="skip-link">Aller au contenu principal</a>
+
+  <header class="app-header" role="banner">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">o</span>
+      <h1 class="brand-name">
+        Mon hub
+        <span class="brand-tag">Open Food Facts · communauté</span>
+      </h1>
+    </div>
+    <nav class="view-toggle" aria-label="Naviguer entre les sections">
+      <a href="community-hub.html" data-page="hub">Hub</a>
+      <a href="https://open-food-o2vaa5ic0-stepanmereniuk-devs-projects.vercel.app/" data-page="social" rel="noopener">Social Food Facts <span aria-hidden="true">↗</span><span class="sr-only">(ouvre dans un nouvel onglet)</span></a>
+      <a href="product-comparator.html" data-page="comparator">Comparateur</a>
+      <a href="https://wiki.openfoodfacts.org" target="_blank" rel="noopener" data-page="wiki">Wiki <span aria-hidden="true">↗</span><span class="sr-only">(ouvre dans un nouvel onglet)</span></a>
+    </nav>
+    <div class="header-right">
+      <button type="button" class="me-chip" aria-label="Ouvrir mon profil">
+        <span class="av" aria-hidden="true">A</span>
+        <span class="me-chip-name">Anna M.</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="app app-hub-grid">
+
+    <nav class="app-nav" aria-label="Navigation principale">
+      <button type="button" class="nav-item" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span>Mon hub</span>
+      </button>
+      <a href="https://open-food-o2vaa5ic0-stepanmereniuk-devs-projects.vercel.app/" class="nav-item" data-page="social">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Social Food Facts <span aria-hidden="true" class="ext-arrow">↗</span></span>
+      </a>
+      <a href="product-comparator.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Comparateur</span>
+      </a>
+      <a href="https://wiki.openfoodfacts.org" target="_blank" rel="noopener" class="nav-item" data-page="wiki">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+        <span>Wiki produits <span aria-hidden="true" class="ext-arrow">↗</span></span>
+      </a>
+
+      <div class="nav-section-title">Outils</div>
+      <button type="button" class="nav-item" id="nav-data">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        <span>Données ouvertes</span>
+      </button>
+
+      <div class="nav-mini mt-20">
+        <span class="av" aria-hidden="true">A</span>
+        <div class="nav-mini-meta">
+          <div class="nav-mini-name">Anna M.</div>
+          <div class="nav-mini-h">@anna · Marseille</div>
+        </div>
+      </div>
+    </nav>
+
+    <main id="main" class="app-main" tabindex="-1">
+
+      <!-- HERO -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <div class="hero-eyebrow" id="today-context">Mardi 26 mai · Marseille</div>
+          <h2 id="hero-title">
+            Bonjour <b>Anna</b>, votre communauté <span id="hero-universe-text">alimentaire</span> a publié <b>23 contributions</b> depuis hier.
+          </h2>
+          <div class="hero-stats">
+            <div class="hero-stat"><div class="v">142</div><div class="l">Contributions</div></div>
+            <div class="hero-stat"><div class="v">47 🔥</div><div class="l">Jours d'affilée</div></div>
+            <div class="hero-stat"><div class="v">12</div><div class="l">Cette semaine · +30%</div></div>
+            <div class="hero-stat"><div class="v">#234</div><div class="l">Classement mondial</div></div>
+          </div>
+          <div class="hero-progress" role="group" aria-label="Progression vers le niveau supérieur">
+            <div class="hero-progress-label">
+              <span>Niveau Argent</span>
+              <span><b>78%</b> vers Or · 58 contributions restantes</span>
+            </div>
+            <div class="hero-progress-bar" role="progressbar" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100" aria-label="78% du niveau Or atteint">
+              <span></span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-avatar" aria-hidden="true">A</div>
+      </section>
+
+      <!-- UNIVERSE SELECTOR -->
+      <section class="section" aria-labelledby="universe-title">
+        <div class="section-head">
+          <h2 id="universe-title">L'écosystème Open Food Facts <span class="tag">5 DATASETS</span></h2>
+          <a href="https://www.data.gouv.fr/organizations/open-food-facts" target="_blank" rel="noopener">Voir sur data.gouv.fr ↗</a>
+        </div>
+
+        <div class="universe-grid" role="group" aria-label="Sélectionnez un univers de données">
+          <button type="button" class="universe-card" data-universe="food" aria-pressed="true">
+            <div class="universe-icon" aria-hidden="true">🍅</div>
+            <div class="universe-name">Open Food Facts</div>
+            <div class="universe-meta">Alimentaire · 4M+ produits</div>
+            <div class="universe-stat">69k vues · 25k téléchargements</div>
+          </button>
+          <button type="button" class="universe-card" data-universe="beauty" aria-pressed="false">
+            <div class="universe-icon" aria-hidden="true">💄</div>
+            <div class="universe-name">Open Beauty Facts</div>
+            <div class="universe-meta">Cosmétiques</div>
+            <div class="universe-stat">12k vues · 2k téléchargements</div>
+          </button>
+          <button type="button" class="universe-card" data-universe="petfood" aria-pressed="false">
+            <div class="universe-icon" aria-hidden="true">🐕</div>
+            <div class="universe-name">Open Pet Food Facts</div>
+            <div class="universe-meta">Alimentation animale</div>
+            <div class="universe-stat">3k vues · 279 téléchargements</div>
+          </button>
+          <button type="button" class="universe-card" data-universe="products" aria-pressed="false">
+            <div class="universe-icon" aria-hidden="true">🪒</div>
+            <div class="universe-name">Open Products Facts</div>
+            <div class="universe-meta">Produits manufacturés</div>
+            <div class="universe-stat">2k vues · 273 téléchargements</div>
+          </button>
+        </div>
+
+        <div class="prices-banner">
+          <div class="prices-icon" aria-hidden="true">💰</div>
+          <div class="prices-body">
+            <div class="prices-title">Open Prices — couche transversale</div>
+            <div class="prices-desc">Prix collectés communautairement sur les produits des 4 univers. 9k vues · 840 téléchargements. Intégré dans le comparateur (prix moyen, évolution, comparateur par enseigne).</div>
+          </div>
+          <a class="prices-link" href="product-comparator.html">Comparateur →</a>
+        </div>
+      </section>
+
+      <!-- ALERTS — filtered by universe -->
+      <section class="section" aria-labelledby="alerts-title">
+        <div class="section-head">
+          <h2 id="alerts-title">⚠ Alertes en cours <span class="tag" id="alerts-count">3 ACTIVES</span></h2>
+          <a href="#">Tout voir →</a>
+        </div>
+        <div id="alerts-list" aria-live="polite"></div>
+      </section>
+
+      <!-- 2-col : Missions + Activity -->
+      <section class="grid-2" aria-label="Missions et activité du réseau">
+
+        <div class="card" aria-labelledby="missions-title">
+          <div class="card-header">
+            <div class="card-icon card-icon-forest" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
+            <h3 class="card-title" id="missions-title">Missions près de vous</h3>
+            <span class="card-count" id="missions-count">—</span>
+          </div>
+          <div id="missions-list"></div>
+        </div>
+
+        <div class="card" aria-labelledby="activity-title">
+          <div class="card-header">
+            <div class="card-icon card-icon-moss" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <h3 class="card-title" id="activity-title">Activité de votre réseau</h3>
+            <span class="card-count">5 récentes</span>
+          </div>
+          <div id="activity-list"></div>
+        </div>
+
+      </section>
+
+      <!-- Watchs + Rank -->
+      <section class="grid-2 mt-lg" aria-label="Watchs et progression">
+
+        <div class="card" aria-labelledby="watch-title">
+          <div class="card-header">
+            <div class="card-icon card-icon-ochre" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <h3 class="card-title" id="watch-title">Vos watchs</h3>
+            <span class="card-count" id="watch-count">24 suivis</span>
+          </div>
+
+          <div class="watch-tabs" role="tablist" aria-label="Catégories de watchs">
+            <button type="button" class="watch-tab" role="tab" aria-selected="true" aria-controls="watch-products" id="tab-products">Produits</button>
+            <button type="button" class="watch-tab" role="tab" aria-selected="false" aria-controls="watch-contributors" id="tab-contributors">Contributeurs</button>
+            <button type="button" class="watch-tab" role="tab" aria-selected="false" aria-controls="watch-hashtags" id="tab-hashtags">Hashtags</button>
+          </div>
+
+          <div id="watch-products" role="tabpanel" aria-labelledby="tab-products" class="watch-list"></div>
+          <div id="watch-contributors" role="tabpanel" aria-labelledby="tab-contributors" class="watch-list" hidden></div>
+          <div id="watch-hashtags" role="tabpanel" aria-labelledby="tab-hashtags" class="watch-list" hidden></div>
+        </div>
+
+        <div class="rank-card" aria-labelledby="rank-title">
+          <div class="eyebrow text-ochre">🏆 Votre progression</div>
+          <h3 id="rank-title" class="rank-card-title">Argent · niveau 4<br><span class="rank-card-subtitle">58 contributions pour passer Or</span></h3>
+          <div class="rank-positions" role="list">
+            <div class="rank-pos" role="listitem"><div class="v">#234</div><div class="l">Mondial</div></div>
+            <div class="rank-pos" role="listitem"><div class="v">#12</div><div class="l">France</div></div>
+            <div class="rank-pos" role="listitem"><div class="v">#2</div><div class="l">Marseille</div></div>
+          </div>
+          <div class="rank-card-badges-label">Badges acquis (7)</div>
+          <div class="rank-badges">
+            <span class="badge-pill new">🆕 Streak 30j</span>
+            <span class="badge-pill">📱 Dev OFF</span>
+            <span class="badge-pill">🇫🇷 FR · IT</span>
+            <span class="badge-pill">📍 PACA Local</span>
+            <span class="badge-pill">📸 +100 photos</span>
+            <span class="badge-pill">♻ Eco-fan</span>
+            <span class="badge-pill">🛡 Modératrice</span>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Stats + Tendances + Quick -->
+      <section class="grid-3 mt-lg" aria-label="Statistiques et tendances">
+
+        <div class="card" aria-labelledby="stats-title">
+          <div class="card-header">
+            <div class="card-icon card-icon-plum" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </div>
+            <h3 class="card-title" id="stats-title">Stats hebdo</h3>
+          </div>
+          <div class="eyebrow mb-sm">Contributions · 7 jours</div>
+          <div class="stats-big">12</div>
+          <div class="stats-trend">↑ +30% vs semaine -1</div>
+          <svg class="stat-sparkline" viewBox="0 0 100 32" preserveAspectRatio="none" aria-label="Évolution sur 7 jours">
+            <polyline points="0,28 14,22 28,24 42,18 56,12 70,15 84,8 100,5" fill="none" stroke="#5A7A4E" stroke-width="2"/>
+            <polyline points="0,28 14,22 28,24 42,18 56,12 70,15 84,8 100,5 100,32 0,32" fill="#5A7A4E" opacity=".12"/>
+          </svg>
+          <div class="stats-note">
+            🥇 Top de la semaine : <b>traduction de 8 fiches</b><br>
+            ⏰ Pic d'activité : mercredi soir
+          </div>
+        </div>
+
+        <div class="card" aria-labelledby="trends-title">
+          <div class="card-header">
+            <div class="card-icon card-icon-terracotta" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            </div>
+            <h3 class="card-title" id="trends-title">Tendances locales</h3>
+          </div>
+          <div id="trends-list"></div>
+          <div class="trends-footer">
+            📍 Détecté dans un rayon de <b>50 km autour de Marseille</b>
+          </div>
+        </div>
+
+        <div class="card" aria-labelledby="actions-title">
+          <div class="card-header">
+            <div class="card-icon card-icon-ink" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <h3 class="card-title" id="actions-title">Actions rapides</h3>
+          </div>
+          <div class="quick-actions">
+            <a class="qa-btn" href="#" data-page="social">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span class="lbl">Social ↗</span>
+            </a>
+            <button type="button" class="qa-btn" data-action="scan">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+              <span class="lbl">Scanner</span>
+            </button>
+            <a class="qa-btn" href="product-comparator.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <span class="lbl">Comparer</span>
+            </a>
+            <a class="qa-btn" href="https://wiki.openfoodfacts.org" target="_blank" rel="noopener" data-page="wiki">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+              <span class="lbl">Wiki ↗</span>
+            </a>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- OPEN DATA -->
+      <section class="section mt-xl" id="opendata-section" aria-labelledby="opendata-title">
+        <div class="section-head">
+          <h2 id="opendata-title">Données ouvertes & réutilisations <span class="tag">OPEN DATA</span></h2>
+          <a href="https://www.data.gouv.fr/organizations/open-food-facts" target="_blank" rel="noopener">data.gouv.fr ↗</a>
+        </div>
+
+        <div class="grid-2">
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon card-icon-forest" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              </div>
+              <h3 class="card-title">Téléchargez les 5 datasets</h3>
+              <span class="card-count">Licence ODbL</span>
+            </div>
+
+            <a class="dataset-row link-reset" href="https://www.data.gouv.fr/datasets/open-food-facts-produits-alimentaires-ingredients-nutrition-labels" target="_blank" rel="noopener">
+              <div class="dataset-icon" aria-hidden="true">🍅</div>
+              <div class="dataset-info"><div class="n">Open Food Facts</div><div class="m">Ingrédients, nutrition, labels · CSV, JSONL, MongoDB, Parquet</div></div>
+              <div class="dataset-stat"><b>4M+</b>produits<br>25k téléch.</div>
+            </a>
+            <a class="dataset-row link-reset" href="https://www.data.gouv.fr/datasets/open-beauty-facts" target="_blank" rel="noopener">
+              <div class="dataset-icon" aria-hidden="true">💄</div>
+              <div class="dataset-info"><div class="n">Open Beauty Facts</div><div class="m">Cosmétiques, ingrédients, additifs</div></div>
+              <div class="dataset-stat"><b>12k</b>vues<br>2k téléch.</div>
+            </a>
+            <a class="dataset-row link-reset" href="https://www.data.gouv.fr/datasets/open-pet-food-facts" target="_blank" rel="noopener">
+              <div class="dataset-icon" aria-hidden="true">🐕</div>
+              <div class="dataset-info"><div class="n">Open Pet Food Facts</div><div class="m">Alimentation chiens, chats, autres</div></div>
+              <div class="dataset-stat"><b>3k</b>vues<br>279 téléch.</div>
+            </a>
+            <a class="dataset-row link-reset" href="https://www.data.gouv.fr/datasets/open-products-facts" target="_blank" rel="noopener">
+              <div class="dataset-icon" aria-hidden="true">🪒</div>
+              <div class="dataset-info"><div class="n">Open Products Facts</div><div class="m">Produits manufacturés divers</div></div>
+              <div class="dataset-stat"><b>2k</b>vues<br>273 téléch.</div>
+            </a>
+            <a class="dataset-row link-reset" href="https://www.data.gouv.fr/datasets/open-prices" target="_blank" rel="noopener">
+              <div class="dataset-icon" aria-hidden="true">💰</div>
+              <div class="dataset-info"><div class="n">Open Prices</div><div class="m">Prix communautaires, transversal aux 4 univers</div></div>
+              <div class="dataset-stat"><b>9k</b>vues<br>840 téléch.</div>
+            </a>
+
+            <div class="dataset-footer">
+              🔗 Disponible aussi via les <b>2 APIs publiques</b> (Product Opener REST + GraphQL). User-Agent custom requis.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon card-icon-terracotta" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+              </div>
+              <h3 class="card-title">Réutilisations communautaires</h3>
+              <span class="card-count">12 répertoriées</span>
+            </div>
+
+            <div class="reuse-text">
+              <p><b>📱 Yuka</b> — app grand public de scan, +30M utilisateurs.</p>
+              <p><b>🔬 Études santé publique</b> — INSERM, Santé Publique France, plusieurs papiers peer-reviewed depuis 2018.</p>
+              <p><b>📰 Data-journalism</b> — Le Monde, Mediapart, Que Choisir, enquêtes pesticides et qualité alimentaire.</p>
+              <p><b>🛒 Apps tiers</b> — ScanUp, Y'a Quoi Dedans, BuyOrNot.</p>
+              <p><b>🎓 Recherche</b> — Universités Paris-Cité, Aix-Marseille, INRAE. Datasets Parquet sur Hugging Face.</p>
+              <p><b>🤖 IA / ML</b> — Robotoff (OCR ingrédients), classification automatique, prédiction Nutri-Score.</p>
+            </div>
+
+            <div class="reuse-cta">
+              💡 <b>Vous réutilisez OFF ?</b> Mentionnez votre projet sur le forum avec le hashtag <code>#reuse</code>.
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Scanner modal (démo visuelle) -->
+  <div class="scanner-overlay" id="scanner-modal" role="dialog" aria-modal="true" aria-labelledby="scanner-status">
+    <div class="scanner-top">
+      <span class="scanner-live">Scan en direct</span>
+      <button type="button" class="scanner-close" id="scanner-close" aria-label="Fermer le scanner">×</button>
+    </div>
+
+    <div class="scanner-viewfinder">
+      <div class="scanner-stage">
+        <div class="scanner-barcode" aria-hidden="true">||||| ||| ||||| ||</div>
+        <div class="scanner-line"></div>
+      </div>
+      <div class="scanner-corner tl"></div>
+      <div class="scanner-corner tr"></div>
+      <div class="scanner-corner bl"></div>
+      <div class="scanner-corner br"></div>
+    </div>
+
+    <div class="scanner-status" id="scanner-status">Initialisation de la caméra…</div>
+    <div class="scanner-substatus" id="scanner-substatus">Calibrage du capteur</div>
+
+    <div class="scanner-found" id="scanner-found">
+      <div class="scanner-found-thumb">🍫</div>
+      <div class="scanner-found-info">
+        <div class="scanner-found-brand">Ferrero</div>
+        <div class="scanner-found-name">Nutella</div>
+        <div class="scanner-found-meta">
+          <span class="nutri-badge e">E</span>
+          <span class="eco-badge d">D</span>
+          <span class="nova-badge n4">4</span>
+          <span style="margin-left:auto;font-size:11px;color:var(--ink-mute);">4,20€</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js" defer></script>
+  <script defer>
+    /* ════════════════════════════════════════════════════════════
+       Données par univers — chaque univers a ses propres alertes,
+       missions, activités, watchs et tendances.
+       ════════════════════════════════════════════════════════════ */
+
+    const DATA = {
+      food: {
+        label: 'alimentaire',
+        alerts: [
+          { type:'danger', tag:'Rappel produit', name:'Pizza Royale 4 fromages — Lot 47B',
+            meta:'📍 Acheté par vous au Carrefour Prado · 12 mai',
+            detail:'Présence détectée de <i>Listeria monocytogenes</i>. Ne pas consommer, rapporter en magasin. 47 personnes de votre réseau suivent ce produit.',
+            source:'RappelConso V2 · publié il y a 2h · DGCCRF' },
+          { type:'warn', tag:'Pesticide · LMR dépassée', name:'Pommes Golden BIO — Verger d\'Italie',
+            meta:'🏷️ Produit de votre watchlist depuis 3 mois',
+            detail:'Résidus de <b>chlorpyrifos</b> à 0.04 mg/kg (LMR : 0.01 mg/kg). 4× le seuil EFSA.',
+            source:'EU Pesticides Database · croisé avec ANSES' },
+          { type:'info', tag:'Nutri-Score mis à jour', name:'Yaourt grec 0% Bonjour Nature : B → D',
+            meta:'🔖 Produit suivi · changement détecté par la communauté',
+            detail:'Nouvelle composition : ajout d\'arômes artificiels et +38% de sucre ajouté. 3 contributeurs ont validé.',
+            source:'OFF · contributions communautaires · 6h' }
+        ],
+        missions: [
+          { type:'photo', dist:'1.2 km · Marseille 8e', title:'5 produits sans photo au Carrefour Prado', progress:60, xp:30, meta:'3 contributeurs intéressés' },
+          { type:'trans', dist:'FR · IT', title:'12 fiches de pâtes artisanales à traduire en italien', progress:8, xp:50, meta:'1/12 fait' },
+          { type:'verify', dist:'Communauté', title:'Confirmer composition Nutella post-reformulation', progress:80, xp:15, meta:'8/10 vérifications' },
+          { type:'scan', dist:'2.5 km · Marché Catalans', title:'Ajouter 3 produits du marché des Catalans', progress:0, xp:40, meta:'Samedi 8h-13h' }
+        ],
+        activities: [
+          { ini:'SG', av:'#5A7A4E', text:'<b>Stéphane G.</b> a publié sur le franchissement des 4M de produits.', time:'35 min · 142 likes' },
+          { ini:'MR', av:'#C8553D', text:'<b>Maya R.</b> vous a mentionnée sur la catégorisation des épices italiennes.', time:'1h · à répondre' },
+          { ini:'DF', av:'#D4A574', text:'<b>Diego F.</b> a uploadé 12 photos de produits brésiliens.', time:'2h · 67 likes' },
+          { ini:'OK', av:'#5A7A4E', text:'<b>Olivia K.</b> organise un meetup à Berlin le 15 juin.', time:'3h · 23 RSVP' },
+          { ini:'KB', av:'#C8553D', text:'<b>Karim B.</b> a finalisé la traduction de 920 fiches d\'huile d\'olive en arabe.', time:'5h · #i18n' }
+        ],
+        watchProducts: [
+          { name:'Pizza Royale 4 fromages', status:'⚠ Rappel', danger:true },
+          { name:'Pommes Golden BIO', status:'⚠ Pesticide', danger:true },
+          { name:'Yaourt grec Bonjour Nature', status:'Mis à jour' },
+          { name:'Bouillabaisse Marius', status:'3 nouv. photos' },
+          { name:'Huile d\'olive Domaine du Soleil', status:'Stable' }
+        ],
+        trends: [
+          { tag:'MarchéCatalans', arrow:'+180%', posts:23 },
+          { tag:'PACAphoto', arrow:'+45%', posts:17 },
+          { tag:'MarseilleBio', arrow:'+28%', posts:12 },
+          { tag:'PastisDoc', arrow:'+12%', posts:8 }
+        ]
+      },
+      beauty: {
+        label: 'cosmétique',
+        alerts: [
+          { type:'danger', tag:'Rappel cosmétique', name:'Crème solaire SPF 50+ Lot K8 — Marque Solar',
+            meta:'📍 Produit de votre watchlist',
+            detail:'Présence de <b>filtre UV interdit</b> (octocrylene contaminé en benzophénone). Ne pas utiliser, retour en parapharmacie.',
+            source:'RAPEX Safety Gate · ANSM · 4h' },
+          { type:'warn', tag:'Allergène · concentration élevée', name:'Vernis à ongles "Vibrant Red"',
+            meta:'🏷️ 1240 personnes suivent ce produit',
+            detail:'Concentration en <b>toluène</b> 3× au-dessus du seuil. Femmes enceintes : à éviter strictement.',
+            source:'Open Beauty Facts · contributions · ANSES' },
+          { type:'info', tag:'Composition mise à jour', name:'Déodorant Bio Aroma : sans aluminium',
+            meta:'🔖 Produit suivi · reformulation',
+            detail:'La marque a annoncé une reformulation sans sels d\'aluminium. 8 contributeurs ont validé.',
+            source:'OBF · contributions communautaires · 1j' }
+        ],
+        missions: [
+          { type:'photo', dist:'2 km · Sephora La Valentine', title:'8 produits sans photo au rayon parfums', progress:40, xp:30, meta:'2 contributeurs intéressés' },
+          { type:'trans', dist:'FR · IT', title:'25 fiches de soins visages italiens à relire', progress:12, xp:50, meta:'3/25 fait' },
+          { type:'verify', dist:'Communauté', title:'Vérifier la liste INCI du nouveau Cattier Bio', progress:60, xp:15, meta:'6/10 vérifications' },
+          { type:'scan', dist:'3 km · Monoprix Beauty', title:'Scanner 5 produits cosmétiques bio', progress:0, xp:40, meta:'Beauté naturelle' }
+        ],
+        activities: [
+          { ini:'CV', av:'#6B3447', text:'<b>Carla V.</b> a ajouté 12 fiches de cosmétiques coréens.', time:'1h · 34 likes' },
+          { ini:'EL', av:'#C8553D', text:'<b>Elena L.</b> a traduit la liste INCI de 18 crèmes anti-âge.', time:'2h · #INCI' },
+          { ini:'OL', av:'#5A7A4E', text:'<b>Olga L.</b> a lancé une enquête sur les filtres UV interdits.', time:'4h · 23 commentaires' },
+          { ini:'YP', av:'#D4A574', text:'<b>Yann P.</b> a uploadé 30 photos de packaging shampoings.', time:'6h · 88 likes' },
+          { ini:'AB', av:'#5A7A4E', text:'<b>Aïcha B.</b> organise un atelier "Lire les étiquettes cosmétiques".', time:'1j · 12 inscrits' }
+        ],
+        watchProducts: [
+          { name:'Crème solaire SPF 50+ Solar', status:'⚠ Rappel', danger:true },
+          { name:'Vernis Vibrant Red', status:'⚠ Toluène', danger:true },
+          { name:'Déodorant Bio Aroma', status:'Reformulé' },
+          { name:'Shampoing Ushuaïa Karité', status:'Stable' }
+        ],
+        trends: [
+          { tag:'INCI', arrow:'+220%', posts:34 },
+          { tag:'CosmétiqueBio', arrow:'+78%', posts:19 },
+          { tag:'SansFiltresUV', arrow:'+42%', posts:14 },
+          { tag:'SoinsNaturels', arrow:'+15%', posts:11 }
+        ]
+      },
+      petfood: {
+        label: 'pour animaux',
+        alerts: [
+          { type:'danger', tag:'Rappel · contamination', name:'Croquettes Premium Chien — Sac 12kg',
+            meta:'📍 4 propriétaires de votre réseau concernés',
+            detail:'Présence de <b>mycotoxines (aflatoxine B1)</b> au-dessus du seuil légal. Ne plus servir, contacter le vétérinaire si symptômes.',
+            source:'DGAL · RappelConso · 6h' },
+          { type:'warn', tag:'Conservateurs · concentration élevée', name:'Pâtée chat "Délice Marin"',
+            meta:'🏷️ 230 propriétaires suivent ce produit',
+            detail:'Concentration en <b>BHA/BHT</b> (E320/E321) supérieure aux recommandations vétérinaires sur le long terme.',
+            source:'Open Pet Food Facts · vétérinaires partenaires' }
+        ],
+        missions: [
+          { type:'photo', dist:'1.5 km · Animalerie Plus', title:'15 croquettes premium à photographier', progress:33, xp:30, meta:'5 photographes inscrits' },
+          { type:'trans', dist:'FR · EN', title:'40 fiches de pâtées à traduire en anglais', progress:25, xp:50, meta:'10/40 fait' },
+          { type:'verify', dist:'Communauté + véto', title:'Vérifier la composition Royal Canin Junior', progress:50, xp:15, meta:'5/10 véto validations' },
+          { type:'scan', dist:'5 km · Maxi Zoo', title:'Scanner 10 produits chiens de chasse', progress:0, xp:40, meta:'Spécialité' }
+        ],
+        activities: [
+          { ini:'VM', av:'#D4A574', text:'<b>Véto Marie</b> (vétérinaire) a validé 25 compositions de croquettes pour chats stérilisés.', time:'1h · #VetoValide' },
+          { ini:'JP', av:'#5A7A4E', text:'<b>Julien P.</b> a uploadé 18 photos de pâtées sans céréales.', time:'2h · 23 likes' },
+          { ini:'LR', av:'#C8553D', text:'<b>Lucie R.</b> a ouvert une discussion sur les croquettes sans céréales.', time:'4h · 47 commentaires' },
+          { ini:'DM', av:'#6B3447', text:'<b>Dr Mathieu</b> publie son guide "Bien lire les étiquettes de pet food".', time:'1j · 156 likes' },
+          { ini:'SF', av:'#5A7A4E', text:'<b>Sarah F.</b> a ajouté 8 nouvelles marques bio.', time:'2j · 34 likes' }
+        ],
+        watchProducts: [
+          { name:'Croquettes Premium Chien 12kg', status:'⚠ Rappel', danger:true },
+          { name:'Pâtée Délice Marin', status:'⚠ BHA/BHT', danger:true },
+          { name:'Royal Canin Junior', status:'Vérifiée' },
+          { name:'Croquettes Bio Yarrah', status:'Stable' }
+        ],
+        trends: [
+          { tag:'CroquettesBio', arrow:'+140%', posts:28 },
+          { tag:'VetoValide', arrow:'+85%', posts:21 },
+          { tag:'SansCéréales', arrow:'+52%', posts:16 },
+          { tag:'NutritionAnimale', arrow:'+22%', posts:9 }
+        ]
+      },
+      products: {
+        label: 'manufacturés',
+        alerts: [
+          { type:'danger', tag:'Rappel sécurité', name:'Détergent Multi-Surfaces — Marque Clean+',
+            meta:'📍 Produit présent dans 12 foyers de votre réseau',
+            detail:'Présence d\'un agent <b>corrosif non déclaré</b>. Risque de brûlures cutanées. Ne plus utiliser, retour magasin.',
+            source:'RAPEX Safety Gate · DGCCRF · 3h' },
+          { type:'warn', tag:'Substance préoccupante', name:'Lessive concentrée "Eco-Power"',
+            meta:'🏷️ Produit suivi par 870 personnes',
+            detail:'Présence de <b>phosphonates</b> (perturbateurs aquatiques). Impact environnemental aggravé.',
+            source:'OPF · contributions · INERIS' }
+        ],
+        missions: [
+          { type:'photo', dist:'1 km · Carrefour Prado', title:'12 produits ménagers sans photo', progress:25, xp:30, meta:'3 photographes' },
+          { type:'trans', dist:'Multi-langues', title:'Traduire les pictogrammes de sécurité de 50 produits', progress:18, xp:50, meta:'9/50 fait' },
+          { type:'verify', dist:'Communauté', title:'Vérifier les composants de 8 lessives bio', progress:75, xp:15, meta:'6/8 vérifié' },
+          { type:'scan', dist:'4 km · Leroy Merlin', title:'Scanner 15 produits de bricolage', progress:0, xp:40, meta:'Rayon hygiène/ménage' }
+        ],
+        activities: [
+          { ini:'BL', av:'#5A7A4E', text:'<b>Benjamin L.</b> a ajouté 25 produits de la rentrée scolaire.', time:'1h · 18 likes' },
+          { ini:'NR', av:'#C8553D', text:'<b>Nadia R.</b> a publié une enquête sur les détergents bio.', time:'2h · 34 commentaires' },
+          { ini:'PG', av:'#D4A574', text:'<b>Pierre G.</b> a uploadé 40 photos de packaging ménager.', time:'3h · 56 likes' },
+          { ini:'IM', av:'#5A7A4E', text:'<b>Inès M.</b> a traduit les pictogrammes de 30 produits hygiène.', time:'5h · #i18n' },
+          { ini:'FL', av:'#6B3447', text:'<b>François L.</b> partage son analyse des compositions de lessives.', time:'1j · 89 likes' }
+        ],
+        watchProducts: [
+          { name:'Détergent Clean+ Multi', status:'⚠ Rappel', danger:true },
+          { name:'Lessive Eco-Power', status:'⚠ Phosphonates', danger:true },
+          { name:'Liquide vaisselle Rainett', status:'Stable' },
+          { name:'Pastilles WC bio Etamine', status:'Vérifiée' }
+        ],
+        trends: [
+          { tag:'LessiveBio', arrow:'+95%', posts:24 },
+          { tag:'ZéroDéchet', arrow:'+62%', posts:18 },
+          { tag:'NettoyantÉcolo', arrow:'+34%', posts:13 },
+          { tag:'PictoSécurité', arrow:'+18%', posts:7 }
+        ]
+      },
+      prices: {
+        label: 'prix transversaux',
+        alerts: [
+          { type:'warn', tag:'Inflation détectée', name:'Catégorie : Pâtes à tartiner',
+            meta:'📊 Surveillance des prix sur 6 mois',
+            detail:'Hausse moyenne de <b>+18%</b> sur les pâtes à tartiner suivies. Nutella : +12%. Bjorg : +5%. Lidl Belbake : +27%.',
+            source:'Open Prices · données communautaires' },
+          { type:'info', tag:'Bonne affaire détectée', name:'Yaourt nature Biocoop',
+            meta:'📍 Disponible à 2.90€ chez Biocoop',
+            detail:'Prix le plus bas constaté depuis 1 an. Économie de 0.70€ par rapport à Naturalia.',
+            source:'Open Prices · 12h' }
+        ],
+        missions: [
+          { type:'scan', dist:'Marché Catalans', title:'Relever les prix sur 20 produits frais', progress:30, xp:40, meta:'Marché du samedi' },
+          { type:'scan', dist:'Carrefour Prado', title:'Comparer 15 prix de marques distributeur', progress:60, xp:30, meta:'9/15 fait' },
+          { type:'verify', dist:'Communauté', title:'Valider 50 relevés de prix douteux', progress:80, xp:15, meta:'Modération' },
+          { type:'scan', dist:'Monoprix La Valentine', title:'Photo + prix sur 25 produits bio', progress:0, xp:50, meta:'Données croisées' }
+        ],
+        activities: [
+          { ini:'MP', av:'#C8553D', text:'<b>Marc P.</b> a relevé 87 prix au Marché des Capucins ce matin.', time:'2h · contribution majeure' },
+          { ini:'CL', av:'#5A7A4E', text:'<b>Céline L.</b> a partagé son comparatif inflation huile d\'olive 2024 vs 2026.', time:'3h · 156 lectures' },
+          { ini:'TR', av:'#D4A574', text:'<b>Thomas R.</b> a uploadé 200 prix de fromages affinés.', time:'5h · 67 likes' },
+          { ini:'SD', av:'#6B3447', text:'<b>Sophie D.</b> a publié sa carte des prix bio en PACA.', time:'1j · #OpenPrices' },
+          { ini:'LM', av:'#5A7A4E', text:'<b>Léa M.</b> a complété 340 fiches avec leur prix moyen.', time:'2j · 234 contributions' }
+        ],
+        watchProducts: [
+          { name:'Nutella 400g', status:'4.20€ (+12%)' },
+          { name:'Pâtes Panzani 500g', status:'1.80€ (=)' },
+          { name:'Huile olive vierge 1L', status:'12.50€ (+34%)', danger:true },
+          { name:'Yaourt nature x4', status:'2.30€ (=)' }
+        ],
+        trends: [
+          { tag:'Inflation2026', arrow:'+220%', posts:42 },
+          { tag:'BonnesAffaires', arrow:'+89%', posts:28 },
+          { tag:'MarchéLocal', arrow:'+45%', posts:19 },
+          { tag:'OpenPrices', arrow:'+25%', posts:14 }
+        ]
+      }
+    };
+
+    /* ════════════════════════════════════════════════════════════
+       RENDU PAR UNIVERS
+       ════════════════════════════════════════════════════════════ */
+
+    function renderAlerts(universe) {
+      const data = DATA[universe];
+      const el = document.getElementById('alerts-list');
+      document.getElementById('alerts-count').textContent = `${data.alerts.length} ACTIVE${data.alerts.length > 1 ? 'S' : ''}`;
+      el.innerHTML = data.alerts.map(a => `
+        <article class="alert-card ${a.type === 'warn' ? 'warn' : a.type === 'info' ? 'info' : ''}" tabindex="0">
+          <div class="alert-icon" aria-hidden="true">${a.type === 'danger' ? '🚨' : a.type === 'warn' ? '⚠️' : '📊'}</div>
+          <div class="alert-body">
+            <span class="alert-tag">${a.tag}</span>
+            <div class="alert-name">${a.name}</div>
+            <div class="alert-meta">${a.meta}</div>
+            <div class="alert-detail">${a.detail}</div>
+            <div class="alert-source">Source : <code>${a.source}</code></div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function renderMissions(universe) {
+      const data = DATA[universe];
+      const el = document.getElementById('missions-list');
+      document.getElementById('missions-count').textContent = `${data.missions.length} dispo`;
+      el.innerHTML = data.missions.map(m => `
+        <button type="button" class="mission">
+          <div class="mission-head">
+            <span class="mission-type ${m.type}">${{photo:'📸 Photo',trans:'🌍 Traduction',verify:'🔍 Vérif',scan:'📦 Scan'}[m.type]}</span>
+            <span class="mission-distance">${m.dist}</span>
+          </div>
+          <div class="mission-title">${m.title}</div>
+          <div class="mission-meta">
+            <span>${m.meta}</span>
+            <span class="progress-bar" aria-label="Progression ${m.progress}%"><span style="width:${m.progress}%"></span></span>
+            <span>+${m.xp} XP</span>
+          </div>
+        </button>
+      `).join('');
+    }
+
+    function renderActivities(universe) {
+      const data = DATA[universe];
+      const el = document.getElementById('activity-list');
+      el.innerHTML = data.activities.map(a => `
+        <div class="activity-item">
+          <div class="activity-av" style="background:${a.av};">${a.ini}</div>
+          <div class="activity-content">
+            ${a.text}
+            <div class="activity-time">${a.time}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderWatchs(universe) {
+      const data = DATA[universe];
+
+      // Onglet Produits
+      const elProducts = document.getElementById('watch-products');
+      elProducts.innerHTML = data.watchProducts.map(w => `
+        <div class="watch-item">
+          <div class="dot ${w.danger ? 'warn' : ''}" aria-hidden="true"></div>
+          <div class="nm">${w.name}</div>
+          <div class="st ${w.danger ? 'danger' : ''}">${w.status}</div>
+        </div>
+      `).join('');
+
+      // Onglet Contributeurs — dérivé des activities (on suit les gens dont on voit l'activité)
+      const elContributors = document.getElementById('watch-contributors');
+      // Stats fictives mais cohérentes par contributeur
+      const followStats = ['142 contribs', '89 contribs', '67 contribs', '234 contribs', '52 contribs', '178 contribs'];
+      elContributors.innerHTML = data.activities.slice(0, 5).map((a, i) => {
+        // Extraire le nom depuis "<b>Nom X.</b> a fait..."
+        const nameMatch = a.text.match(/<b>([^<]+)<\/b>/);
+        const name = nameMatch ? nameMatch[1] : 'Contributeur';
+        return `
+          <div class="watch-item">
+            <div class="dot" aria-hidden="true"></div>
+            <div class="nm" style="display:flex;align-items:center;gap:8px;">
+              <span class="activity-av" style="background:${a.av};width:24px;height:24px;font-size:10px;">${a.ini}</span>
+              ${name}
+            </div>
+            <div class="st">${followStats[i] || 'Actif'}</div>
+          </div>
+        `;
+      }).join('');
+
+      // Onglet Hashtags — dérivé des trends (les hashtags qu'on suit sont ceux qui tendent)
+      const elHashtags = document.getElementById('watch-hashtags');
+      elHashtags.innerHTML = data.trends.map(t => `
+        <div class="watch-item">
+          <div class="dot" aria-hidden="true"></div>
+          <div class="nm" style="color:var(--terracotta);font-weight:700;">#${t.tag}</div>
+          <div class="st">${t.posts} posts · ${t.arrow}</div>
+        </div>
+      `).join('');
+
+      // Mise à jour du compteur dans l'en-tête de la card
+      const total = data.watchProducts.length + 5 + data.trends.length;
+      const countEl = document.getElementById('watch-count');
+      if (countEl) countEl.textContent = `${total} suivis`;
+    }
+
+    function renderTrends(universe) {
+      const data = DATA[universe];
+      const el = document.getElementById('trends-list');
+      el.innerHTML = data.trends.map(t => `
+        <button type="button" class="trend-tag">
+          <span class="t">#${t.tag}</span>
+          <span class="arrow">↗ ${t.arrow}</span>
+          <span class="m">${t.posts} posts</span>
+        </button>
+      `).join('');
+    }
+
+    function renderForUniverse(universe) {
+      const data = DATA[universe] || DATA.food;
+      const safeRun = (name, fn) => {
+        try { fn(); }
+        catch (e) { console.error(`[hub] erreur dans ${name} :`, e); }
+      };
+
+      safeRun('hero-text', () => {
+        document.getElementById('hero-universe-text').textContent = data.label;
+      });
+      safeRun('renderAlerts', () => renderAlerts(universe));
+      safeRun('renderMissions', () => renderMissions(universe));
+      safeRun('renderActivities', () => renderActivities(universe));
+      safeRun('renderWatchs', () => renderWatchs(universe));
+      safeRun('renderTrends', () => renderTrends(universe));
+
+      // Met à jour l'état visuel des cartes univers
+      document.querySelectorAll('.universe-card').forEach(c => {
+        c.setAttribute('aria-pressed', c.dataset.universe === universe ? 'true' : 'false');
+      });
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       SCANNER — démo visuelle (simule un scan de code-barres)
+       Séquence : caméra → recherche → produit trouvé → redirection
+       En production, remplacer par getUserMedia + lib ZXing-js
+       ════════════════════════════════════════════════════════════ */
+
+    function runScannerDemo() {
+      const overlay = document.getElementById('scanner-modal');
+      const status = document.getElementById('scanner-status');
+      const sub = document.getElementById('scanner-substatus');
+      const found = document.getElementById('scanner-found');
+      if (!overlay) return;
+
+      // État initial
+      status.textContent = 'Initialisation de la caméra…';
+      status.className = 'scanner-status';
+      sub.textContent = 'Calibrage du capteur';
+      found.classList.remove('show');
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+
+      // Séquence d'étapes
+      const steps = [
+        { t: 600,  status: 'Caméra activée — visez un code-barres', sub: 'Format attendu : EAN-13' },
+        { t: 1700, status: 'Analyse du code-barres…',                sub: 'Décodage en cours' },
+        { t: 2700, status: 'Recherche dans Open Food Facts…',        sub: 'API : api/v2/product/{barcode}' },
+        { t: 3500, status: '✓ Produit trouvé !', sub: 'EAN-13 : 3017624010701', success: true, showFound: true },
+        { t: 5300, status: 'Ouverture de la fiche…',                 sub: 'Redirection vers le comparateur' }
+      ];
+
+      const timers = [];
+      steps.forEach(step => {
+        timers.push(setTimeout(() => {
+          status.textContent = step.status;
+          sub.textContent = step.sub;
+          if (step.success) status.classList.add('success');
+          if (step.showFound) found.classList.add('show');
+        }, step.t));
+      });
+
+      // Redirection vers le comparateur avec Nutella pré-ouvert
+      timers.push(setTimeout(() => {
+        try { sessionStorage.setItem('scanned-product-id', 't1'); } catch (e) {}
+        window.location.href = 'product-comparator.html';
+      }, 6000));
+
+      // Fermeture manuelle annule tout
+      const closeBtn = document.getElementById('scanner-close');
+      const cancel = () => {
+        timers.forEach(clearTimeout);
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+      };
+      closeBtn.onclick = cancel;
+      // Esc ferme aussi
+      const escHandler = e => {
+        if (e.key === 'Escape') { cancel(); document.removeEventListener('keydown', escHandler); }
+      };
+      document.addEventListener('keydown', escHandler);
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       INTERACTIONS
+       ════════════════════════════════════════════════════════════ */
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Univers initial (fallback robuste si OFFApp pas chargé)
+      const current = (window.OFFApp && OFFApp.getActiveUniverse) ? OFFApp.getActiveUniverse() : 'food';
+      try { renderForUniverse(current); }
+      catch (e) { console.error('[hub] renderForUniverse initial échoué :', e); }
+
+      // Universe selector — TOUJOURS attaché, peu importe ce qui précède
+      document.querySelectorAll('.universe-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const universe = card.dataset.universe;
+          if (window.OFFApp && OFFApp.setActiveUniverse) {
+            OFFApp.setActiveUniverse(universe);
+          }
+          renderForUniverse(universe);
+          if (window.OFFApp && OFFApp.toast && OFFApp.universes) {
+            OFFApp.toast(`✓ Univers actif : ${OFFApp.universes[universe].label}`);
+          }
+        });
+      });
+
+      // Watch tabs (ARIA tablist)
+      const tabs = document.querySelectorAll('.watch-tab');
+      const panels = ['watch-products', 'watch-contributors', 'watch-hashtags'];
+      tabs.forEach((tab, idx) => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.setAttribute('aria-selected', 'false'));
+          tab.setAttribute('aria-selected', 'true');
+          panels.forEach((p, i) => {
+            const el = document.getElementById(p);
+            if (el) el.hidden = i !== idx;
+          });
+        });
+        tab.addEventListener('keydown', e => {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const next = e.key === 'ArrowRight' ? (idx + 1) % tabs.length : (idx - 1 + tabs.length) % tabs.length;
+            tabs[next].focus();
+            tabs[next].click();
+          }
+        });
+      });
+
+      // Quick actions : handlers explicites pour TOUTES les cartes
+      document.querySelectorAll('.qa-btn').forEach(btn => {
+        const label = btn.querySelector('.lbl')?.textContent?.trim() || '';
+        const dataPage = btn.dataset.page;
+        const dataAction = btn.dataset.action;
+        const href = btn.getAttribute('href');
+
+        btn.addEventListener('click', e => {
+          // Scanner : ouvre la modale de scan animée
+          if (dataAction === 'scan') {
+            e.preventDefault();
+            runScannerDemo();
+            return;
+          }
+          // Social : URL placeholder → toast clair, pas de navigation
+          if (dataPage === 'social') {
+            e.preventDefault();
+            if (window.OFFApp?.toast) OFFApp.toast('🚧 Page Social Food Fact à configurer (app.js → EXTERNAL_LINKS.social)');
+            return;
+          }
+          // Wiki / Comparer / autres : laisser le navigateur naviguer naturellement
+          // (href est défini en dur dans le HTML pour Wiki = wiki.openfoodfacts.org)
+          if (window.OFFApp?.toast && href && href !== '#') {
+            OFFApp.toast(`↗ ${label}`);
+          }
+        });
+      });
+
+      // Nav data → scroll to opendata section
+      document.getElementById('nav-data').addEventListener('click', () => {
+        document.getElementById('opendata-section').scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>

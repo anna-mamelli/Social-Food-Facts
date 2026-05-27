@@ -1,0 +1,2171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Food Facts — Réseau communautaire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  :root {
+    --paper: #FAF7F2;
+    --paper-2: #F2EDE2;
+    --paper-3: #EDE6D5;
+    --ink: #1F2418;
+    --ink-soft: #3A3F32;
+    --forest: #2D4A2B;
+    --moss: #5A7A4E;
+    --terracotta: #C8553D;
+    --terracotta-soft: #E58E78;
+    --ochre: #D4A574;
+    --plum: #6B3447;
+    --rule: #DDD5C2;
+    --rule-soft: #E8E2D5;
+    --mastodon: #6364FF;
+    --bluesky: #0085FF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ───── Header ───── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    position: sticky; top: 0;
+    z-index: 600;
+  }
+  .brand { display: flex; align-items: baseline; gap: 12px; }
+  .logo {
+    width: 32px; height: 32px;
+    background: var(--forest);
+    border-radius: 7px;
+    display: grid; place-items: center;
+    color: var(--paper);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    transform: translateY(3px);
+  }
+  .brand h1 {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 22px;
+    letter-spacing: -.5px;
+  }
+  .brand small {
+    display: block;
+    font-style: normal;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--moss);
+    margin-top: -2px;
+  }
+  .view-toggle {
+    display: flex;
+    background: var(--paper-2);
+    border-radius: 999px;
+    padding: 3px;
+  }
+  .view-toggle a, .view-toggle button {
+    background: transparent;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--moss);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .view-toggle a[aria-current="page"], .view-toggle button.active { background: var(--ink); color: var(--paper); }
+  .header-right { display: flex; gap: 10px; align-items: center; }
+  .me-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--paper-2);
+    padding: 5px 12px 5px 5px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .me-chip:hover { background: var(--paper-3); }
+  .me-chip .av {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    color: var(--paper);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    display: grid; place-items: center;
+  }
+  .me-chip span { font-size: 12.5px; font-weight: 600; }
+
+  /* ───── Layout ───── */
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr 320px;
+    height: calc(100vh - 57px);
+  }
+  nav.left {
+    border-right: 1px solid var(--rule);
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .15s;
+    font-size: 14px;
+    font-weight: 500;
+    position: relative;
+  }
+  .nav-item:hover { background: var(--paper-2); }
+  .nav-item.active {
+    background: var(--ink);
+    color: var(--paper);
+    font-weight: 700;
+  }
+  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .nav-item .badge {
+    margin-left: auto;
+    background: var(--terracotta);
+    color: var(--paper);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-variant-numeric: tabular-nums;
+  }
+  .nav-item.active .badge { background: var(--ochre); color: var(--ink); }
+
+  .nav-divider { height: 1px; background: var(--rule); margin: 12px 8px; }
+
+  .nav-mini-profile {
+    margin-top: auto;
+    padding: 12px;
+    background: var(--paper-2);
+    border-radius: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .nav-mini-profile .av {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    color: var(--paper);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    display: grid; place-items: center;
+  }
+  .nav-mini-profile .meta { font-size: 11px; min-width: 0; }
+  .nav-mini-profile .meta .n { font-weight: 700; font-size: 13px; color: var(--ink); }
+  .nav-mini-profile .meta .h { color: var(--moss); }
+
+  /* Center */
+  main.center {
+    overflow-y: auto;
+    border-right: 1px solid var(--rule);
+  }
+  main::-webkit-scrollbar { width: 6px; }
+  main::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+
+  .view-header {
+    padding: 18px 28px 12px;
+    border-bottom: 1px solid var(--rule);
+    background: rgba(250,247,242,.95);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .view-header h2 {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 26px;
+    letter-spacing: -.5px;
+  }
+  .view-header .sub {
+    font-size: 12px;
+    color: var(--moss);
+    margin-top: 2px;
+  }
+
+  /* Right rail */
+  aside.right {
+    overflow-y: auto;
+    padding: 18px 18px 28px;
+  }
+  aside.right::-webkit-scrollbar { width: 4px; }
+  aside.right::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 2px; }
+
+  /* ───── Composer ───── */
+  .composer {
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    gap: 14px;
+  }
+  .composer .av {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    color: var(--paper);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--rule);
+  }
+  .composer-body { flex: 1; min-width: 0; }
+  .composer textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink);
+    min-height: 60px;
+    padding: 6px 0;
+  }
+  .composer textarea::placeholder { color: var(--moss); }
+  .composer-tools {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 10px;
+    border-top: 1px solid var(--rule-soft);
+    flex-wrap: wrap;
+  }
+  .composer-type {
+    display: flex;
+    gap: 4px;
+  }
+  .type-btn {
+    background: var(--paper-2);
+    border: none;
+    width: 32px; height: 32px;
+    border-radius: 7px;
+    color: var(--moss);
+    display: grid;
+    place-items: center;
+    transition: all .15s;
+  }
+  .type-btn:hover { background: var(--paper-3); color: var(--ink); }
+  .type-btn.active { background: var(--forest); color: var(--paper); }
+  .type-btn svg { width: 15px; height: 15px; }
+  .composer-end {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .char-count {
+    font-size: 12px;
+    color: var(--moss);
+    font-variant-numeric: tabular-nums;
+  }
+  .char-count.warn { color: var(--terracotta); font-weight: 600; }
+  .btn-post {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all .15s;
+  }
+  .btn-post:hover:not(:disabled) { background: var(--terracotta); transform: translateY(-1px); }
+  .btn-post:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* ───── Post ───── */
+  .post {
+    padding: 18px 28px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    gap: 14px;
+    cursor: pointer;
+    transition: background .12s;
+    animation: slideIn .35s ease-out;
+  }
+  .post:hover { background: rgba(242,237,226,.4); }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .post .av {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    color: var(--ink);
+    display: grid;
+    place-items: center;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--rule);
+  }
+  .post-body { flex: 1; min-width: 0; }
+  .post-head {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+  .post-name { font-weight: 700; font-size: 14px; }
+  .post-name:hover { color: var(--terracotta); }
+  .post-handle { font-size: 12px; color: var(--moss); }
+  .post-time { font-size: 12px; color: var(--moss); margin-left: auto; }
+  .post-time::before { content: '· '; }
+  .post-pin {
+    background: var(--paper-2);
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    color: var(--moss);
+  }
+  .post-pin.question { background: #ECE1EF; color: var(--plum); }
+  .post-pin.event { background: #FCEDE6; color: var(--terracotta); }
+  .post-pin.poll { background: #ECF5E3; color: var(--forest); }
+  .post-pin.activity { background: var(--paper-2); color: var(--moss); }
+
+  .post-content {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-bottom: 10px;
+  }
+  .post-content .tag {
+    color: var(--terracotta);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .post-content .tag:hover { text-decoration: underline; }
+  .post-content .mention {
+    color: var(--forest);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Embed (product / activity card) */
+  .embed {
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: var(--paper-2);
+    border-left: 3px solid var(--ochre);
+    margin-bottom: 10px;
+    font-size: 12.5px;
+  }
+  .embed.product {
+    border-left-color: var(--forest);
+  }
+  .embed-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--moss);
+    margin-bottom: 4px;
+  }
+  .embed-title {
+    font-weight: 700;
+    font-size: 13.5px;
+    color: var(--ink);
+  }
+  .embed-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+  }
+  .embed-pill {
+    background: var(--paper);
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    border: 1px solid var(--rule-soft);
+  }
+  .embed-meta {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--moss);
+  }
+
+  /* Poll */
+  .poll-options { margin-top: 6px; display: flex; flex-direction: column; gap: 6px; }
+  .poll-opt {
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 7px;
+    padding: 8px 12px;
+    font-size: 13px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .poll-opt:hover { background: var(--paper-3); }
+  .poll-opt.voted::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--forest);
+    opacity: .15;
+    width: var(--pct, 0%);
+  }
+  .poll-opt-text { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; }
+  .poll-opt .pct { font-weight: 700; color: var(--forest); }
+  .poll-total { font-size: 11px; color: var(--moss); margin-top: 6px; }
+
+  /* Actions */
+  .post-actions {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-top: 6px;
+  }
+  .pa-btn {
+    background: none;
+    border: none;
+    color: var(--moss);
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: all .15s;
+  }
+  .pa-btn:hover { background: var(--paper-2); color: var(--ink); }
+  .pa-btn.liked { color: var(--terracotta); }
+  .pa-btn.boosted { color: var(--forest); }
+  .pa-btn svg { width: 14px; height: 14px; }
+  .pa-btn .count { font-variant-numeric: tabular-nums; }
+  .pa-btn.fed-btn {
+    margin-left: auto;
+    background: linear-gradient(135deg, var(--mastodon) 0%, var(--bluesky) 100%);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    padding: 4px 10px;
+  }
+  .pa-btn.fed-btn:hover { transform: translateY(-1px); color: white; background: linear-gradient(135deg, var(--mastodon) 0%, var(--bluesky) 100%); }
+
+  /* Comments */
+  .comments {
+    border-top: 1px solid var(--rule-soft);
+    margin-top: 10px;
+    padding-top: 10px;
+    display: none;
+  }
+  .comments.open { display: block; }
+  .comment {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--rule-soft);
+  }
+  .comment:last-of-type { border-bottom: none; }
+  .comment .av {
+    width: 30px; height: 30px;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+  .comment-body { flex: 1; min-width: 0; }
+  .comment-head {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+  .comment-name { font-weight: 700; font-size: 12.5px; }
+  .comment-time { font-size: 11px; color: var(--moss); margin-left: auto; }
+  .comment-content {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .comment-input {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+  .comment-input input {
+    flex: 1;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+  }
+  .comment-input input:focus { border-color: var(--forest); }
+  .comment-input button {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* ───── Right rail cards ───── */
+  .card {
+    background: var(--paper-2);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--moss);
+    margin-bottom: 10px;
+  }
+
+  .trending { display: flex; flex-direction: column; gap: 2px; }
+  .trend {
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .trend:hover { background: var(--paper); }
+  .trend-tag {
+    color: var(--terracotta);
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+  .trend-meta {
+    font-size: 11px;
+    color: var(--moss);
+    margin-top: 1px;
+  }
+
+  .suggest-mini {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .suggest-mini:last-of-type { border-bottom: none; }
+  .suggest-mini .av {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .suggest-mini .info { flex: 1; min-width: 0; }
+  .suggest-mini .nm { font-weight: 700; font-size: 12.5px; cursor: pointer; }
+  .suggest-mini .nm:hover { color: var(--terracotta); }
+  .suggest-mini .role { font-size: 11px; color: var(--moss); }
+  .mini-follow {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .mini-follow.following {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--rule);
+  }
+
+  .fed-card {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 12px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .fed-card::before {
+    content: '';
+    position: absolute;
+    inset: -50% -20% auto auto;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, var(--terracotta) 0%, transparent 60%);
+    opacity: .3;
+    pointer-events: none;
+  }
+  .fed-card .eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    color: var(--ochre);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .fed-card h3 {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .fed-card p {
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--paper-2);
+    margin-bottom: 12px;
+  }
+  .fed-handle {
+    background: rgba(255,255,255,.08);
+    border: 1px dashed rgba(255,255,255,.25);
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    color: var(--ochre);
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-family: 'SF Mono',Menlo,monospace;
+  }
+  .fed-handle:hover { background: rgba(255,255,255,.14); }
+  .fed-cta {
+    background: var(--terracotta);
+    color: var(--paper);
+    border: none;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+
+  /* ───── Explorer ───── */
+  .explorer-search {
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .explorer-search input {
+    width: 100%;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+  }
+  .explorer-section { padding: 18px 28px; border-bottom: 1px solid var(--rule); }
+  .explorer-h {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-style: italic;
+    font-size: 19px;
+    margin-bottom: 12px;
+  }
+  .topics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .topic-card {
+    background: var(--paper-2);
+    border-radius: 10px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all .15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .topic-card:hover {
+    background: var(--paper-3);
+    transform: translateY(-1px);
+  }
+  .topic-card .t {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .topic-card .m {
+    font-size: 11.5px;
+    color: var(--moss);
+  }
+  .topic-card .tag {
+    position: absolute;
+    top: 12px; right: 12px;
+    font-size: 10px;
+    background: var(--terracotta);
+    color: var(--paper);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+  }
+
+  /* ───── Notifications ───── */
+  .notif-list { padding: 0; }
+  .notif {
+    padding: 14px 28px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    gap: 14px;
+    cursor: pointer;
+    align-items: flex-start;
+  }
+  .notif.unread { background: rgba(212,165,116,.08); }
+  .notif:hover { background: rgba(242,237,226,.6); }
+  .notif-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .notif-icon svg { width: 16px; height: 16px; color: var(--paper); }
+  .notif-text { flex: 1; font-size: 13.5px; line-height: 1.5; }
+  .notif-text b { font-weight: 700; }
+  .notif-time { font-size: 11px; color: var(--moss); margin-top: 3px; }
+  .notif-action {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: auto;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  /* ───── Messages ───── */
+  .messages-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    height: 100%;
+  }
+  .conv-list {
+    border-right: 1px solid var(--rule);
+    overflow-y: auto;
+  }
+  .conv-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule-soft);
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+    align-items: flex-start;
+  }
+  .conv-item:hover, .conv-item.active { background: var(--paper-2); }
+  .conv-item .av {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .conv-item .info { flex: 1; min-width: 0; }
+  .conv-item .n { font-size: 12.5px; font-weight: 700; }
+  .conv-item .last {
+    font-size: 11.5px;
+    color: var(--moss);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 170px;
+  }
+  .conv-item .t { font-size: 10px; color: var(--moss); }
+
+  .conv-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+  .conv-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .conv-thread {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .msg {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+  .msg.them {
+    align-self: flex-start;
+    background: var(--paper-2);
+    border-bottom-left-radius: 4px;
+  }
+  .msg.me {
+    align-self: flex-end;
+    background: var(--ink);
+    color: var(--paper);
+    border-bottom-right-radius: 4px;
+  }
+  .msg-time {
+    font-size: 10px;
+    color: var(--moss);
+    margin-top: 4px;
+    align-self: var(--align, flex-start);
+  }
+  .msg-compose {
+    padding: 12px 20px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    gap: 10px;
+  }
+  .msg-compose input {
+    flex: 1;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+  }
+  .msg-compose button {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  /* ───── Profile page ───── */
+  .profile-cover {
+    height: 120px;
+    background: linear-gradient(135deg, var(--forest) 0%, var(--moss) 100%);
+    position: relative;
+  }
+  .profile-header {
+    padding: 0 28px;
+    margin-top: -42px;
+  }
+  .profile-av {
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    border: 4px solid var(--paper);
+    display: grid; place-items: center;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+  .profile-actions-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -78px;
+    margin-bottom: 28px;
+    gap: 8px;
+  }
+  .profile-name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .profile-name {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 26px;
+    letter-spacing: -.5px;
+  }
+  .badge-verif {
+    background: var(--forest);
+    color: var(--paper);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .profile-handle-line { font-size: 13px; color: var(--moss); margin-bottom: 10px; }
+  .profile-bio-prose {
+    font-size: 14px;
+    line-height: 1.55;
+    margin-bottom: 12px;
+  }
+  .profile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-size: 12.5px;
+    color: var(--moss);
+    margin-bottom: 14px;
+  }
+  .profile-meta span { display: flex; align-items: center; gap: 5px; }
+  .profile-meta svg { width: 13px; height: 13px; }
+  .profile-stats-row {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+  .profile-stats-row span {
+    color: var(--moss);
+  }
+  .profile-stats-row b {
+    color: var(--ink);
+    font-weight: 700;
+    margin-right: 3px;
+  }
+  .profile-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--rule);
+    padding: 0 28px;
+    margin-top: 8px;
+  }
+  .profile-tab {
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--moss);
+    border-bottom: 2px solid transparent;
+  }
+  .profile-tab.active { color: var(--ink); border-bottom-color: var(--terracotta); }
+  .profile-tab:hover { color: var(--ink); }
+
+  /* ───── Modals ───── */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(31,36,24,.55);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal-box {
+    background: var(--paper);
+    width: 100%;
+    max-width: 720px;
+    max-height: 92vh;
+    overflow-y: auto;
+    border-radius: 14px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.3);
+    padding: 24px;
+  }
+  .modal-box.lg { max-width: 920px; }
+  .modal-close {
+    background: var(--paper-2);
+    border: none;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    float: right;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .modal-h {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-style: italic;
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+  .modal-sub { font-size: 12px; color: var(--moss); margin-bottom: 18px; }
+
+  /* Federation preview */
+  .fed-preview {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 16px;
+  }
+  .fed-col {
+    background: var(--paper-2);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .fed-col-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .fed-col-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .fed-mock {
+    background: var(--paper);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 12px;
+    border: 1px solid var(--rule-soft);
+  }
+  .fed-mock-head { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .fed-mock-av {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    color: var(--paper);
+    display: grid; place-items: center;
+    font-weight: 700;
+    font-size: 11px;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    flex-shrink: 0;
+  }
+  .fed-mock-meta { font-size: 10.5px; line-height: 1.3; }
+  .fed-mock-meta b { font-size: 12px; }
+  .fed-mock-meta .h { color: var(--moss); }
+  .fed-mock-body { font-size: 12px; line-height: 1.45; margin-bottom: 8px; }
+  .fed-mock-actions {
+    display: flex;
+    gap: 14px;
+    font-size: 10px;
+    color: var(--moss);
+  }
+  .fed-mock-actions span { display: inline-flex; align-items: center; gap: 3px; }
+  .fed-mock.mastodon { border-top: 3px solid var(--mastodon); }
+  .fed-mock.bluesky  { border-top: 3px solid var(--bluesky); }
+  .fed-mock.off      { border-top: 3px solid var(--forest); }
+  .fed-explain {
+    margin-top: 18px;
+    padding: 14px;
+    background: var(--paper-2);
+    border-radius: 8px;
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(40px);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 99999;
+    opacity: 0;
+    transition: all .25s;
+    box-shadow: 0 8px 24px rgba(0,0,0,.3);
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 200px 1fr 280px; }
+  }
+  @media (max-width: 880px) {
+    .layout { grid-template-columns: 70px 1fr; }
+    .nav-item span:not(.badge) { display: none; }
+    .nav-mini-profile { display: none; }
+    aside.right { display: none; }
+  }
+</style>
+</head>
+<body data-page="network">
+
+<a href="#main-content" class="skip-link">Aller au contenu principal</a>
+
+<header role="banner">
+  <div class="brand">
+    <div class="logo" aria-hidden="true">o</div>
+    <h1>Réseau communautaire<small>Open Food Facts · social fédéré</small></h1>
+  </div>
+  <nav class="view-toggle" aria-label="Naviguer entre les sections">
+    <a href="community-hub.html" data-page="hub">Hub</a>
+    <a href="https://open-food-o2vaa5ic0-stepanmereniuk-devs-projects.vercel.app/" data-page="social" rel="noopener">Social Food Facts <span aria-hidden="true">↗</span><span class="sr-only">(ouvre dans un nouvel onglet)</span></a>
+    <a href="product-comparator.html" data-page="comparator">Comparateur</a>
+    <a href="https://wiki.openfoodfacts.org" target="_blank" rel="noopener" data-page="wiki">Wiki <span aria-hidden="true">↗</span><span class="sr-only">(ouvre dans un nouvel onglet)</span></a>
+  </nav>
+  <div class="header-right">
+    <button class="me-chip" onclick="setView('profile')" aria-label="Ouvrir mon profil">
+      <span class="av" aria-hidden="true">A</span>
+      <span>Anna M.</span>
+    </button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <nav class="left">
+    <div class="nav-item active" data-view="feed">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <span>Fil</span>
+    </div>
+    <div class="nav-item" data-view="explorer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span>Explorer</span>
+    </div>
+    <div class="nav-item" data-view="notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span>Notifications</span>
+      <span class="badge" id="notif-badge">6</span>
+    </div>
+    <div class="nav-item" data-view="messages">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>Messages</span>
+      <span class="badge" id="msg-badge">3</span>
+    </div>
+    <div class="nav-item" data-view="profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Profil</span>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-item" onclick="openFederationPreview()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span style="font-size:13px;">Fédération</span>
+    </div>
+
+    <div class="nav-mini-profile">
+      <div class="av">A</div>
+      <div class="meta">
+        <div class="n">Anna M.</div>
+        <div class="h">@anna · Marseille</div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="center" id="main-content"></main>
+
+  <aside class="right" id="right-rail"></aside>
+
+</div>
+
+<!-- Modals -->
+<div class="modal-backdrop" id="modal"><div class="modal-box" id="modal-content"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   DATA
+   ════════════════════════════════════════════════════════════ */
+const CONTRIBUTORS = {
+  'anna':     { name:'Anna M.',     city:'Marseille, FR',  roles:['dev'],          color:'#2D4A2B', avColor:'#C8553D', bio:"Dév mobile/web, accessibilité des données nutritionnelles. Bachelor ASR à La Plateforme_, freelance.", joined:'mars 2024', products:142, photos:67, langs:['fr','en','it'] },
+  'stephane': { name:'Stéphane G.', city:'Paris, FR',      roles:['dev','ambassador'], color:'#2D4A2B', avColor:'#5A7A4E', bio:"Cofondateur historique d'Open Food Facts. Je code, j'évangélise, je goûte.", joined:'mai 2012', products:8420, photos:3120, verified: true, langs:['fr','en'] },
+  'diego':    { name:'Diego F.',    city:'São Paulo, BR',  roles:['photographer'], color:'#D4A574', avColor:'#D4A574', bio:"Photographe alimentaire freelance. 2087 photos uploadées sur OFF.", joined:'janv 2021', products:412, photos:2087, langs:['pt','es'] },
+  'maya':     { name:'Maya R.',     city:'Mumbai, IN',     roles:['translator'],   color:'#C8553D', avColor:'#C8553D', bio:"Spécialiste épices et lentilles. Traduction hi/mr/en.", joined:'sept 2022', products:78, photos:34, langs:['hi','mr','en'] },
+  'yuki':     { name:'Yuki T.',     city:'Tokyo, JP',      roles:['dev'],          color:'#2D4A2B', avColor:'#6B3447', bio:"Backend dev. Extension OCR étiquettes japonaises.", joined:'oct 2023', products:340, photos:120, langs:['ja','en'] },
+  'olivia':   { name:'Olivia K.',   city:'Berlin, DE',     roles:['ambassador'],   color:'#5A7A4E', avColor:'#5A7A4E', bio:"Coordinatrice communauté germanophone. Meetups mensuels.", joined:'avr 2021', products:340, photos:156, langs:['de','en'] },
+  'karim':    { name:'Karim B.',    city:'Tunis, TN',      roles:['translator','ambassador'], color:'#C8553D', avColor:'#C8553D', bio:"Coordination Maghreb. Traductions arabe + relais associatif.", joined:'fév 2023', products:670, photos:230, langs:['ar','fr','en'] },
+  'helena':   { name:'Helena M.',   city:'Lisbonne, PT',   roles:['ambassador'],   color:'#5A7A4E', avColor:'#D4A574', bio:"Coordination Portugal + Brésil. Événements OFF.", joined:'juin 2022', products:920, photos:340, langs:['pt','en','es'] },
+  'thomas':   { name:'Thomas R.',   city:'Lyon, FR',       roles:['translator'],   color:'#C8553D', avColor:'#6B3447', bio:"Relecture trilingue. Ancien prof de langues.", joined:'mars 2024', products:45, photos:12, langs:['fr','en','de'] },
+  'kwame':    { name:'Kwame O.',    city:'Accra, GH',      roles:['dev'],          color:'#2D4A2B', avColor:'#2D4A2B', bio:"Mobile dev. App de scan adaptée aux produits africains.", joined:'janv 2024', products:67, photos:45, langs:['en','tw'] },
+  'sofia':    { name:'Sofía A.',    city:'Buenos Aires, AR', roles:['ambassador'], color:'#5A7A4E', avColor:'#C8553D', bio:"Animatrice communauté hispanophone Latam.", joined:'mai 2023', products:340, photos:120, langs:['es','en'] },
+  'priya':    { name:'Priya N.',    city:'Bangalore, IN',  roles:['dev'],          color:'#2D4A2B', avColor:'#D4A574', bio:"Android dev sur l'app mobile OFF.", joined:'août 2023', products:120, photos:60, langs:['en','kn','hi'] }
+};
+
+const ME = 'anna';
+
+const SEED_POSTS = [
+  { id:1,  author:'stephane', type:'announce',   minutesAgo:35,  content:"On vient de franchir les **4 millions** de produits dans la base, merci à tous les contributeurs ! 🎉 Prochain objectif : meilleure couverture en Afrique de l'Ouest. Si vous avez du temps cet été, c'est par là qu'on a besoin de vous. #OFFmilestone #DataQuality", likes:142, boosts:38 },
+  { id:2,  author:'maya',     type:'question',   minutesAgo:95,  content:"Quelqu'un sait comment classer le *dulce de leche* industriel ? Catégorie laitière ou confiserie ? J'ai trouvé les deux dans la base, ça crée des doublons. #DataQuality #Latam", likes:23, boosts:4 },
+  { id:3,  author:'diego',    type:'photo',      minutesAgo:140, content:"Nouvelle session photo à São Paulo, 12 produits brésiliens locaux ajoutés cet après-midi 📸 #PhotoOFF #Brazil", embed:{ type:'product', items:['Açaí Pulpe Bio','Pão de Queijo','Guaraná Antarctica','Brigadeiro','Queijo Coalho'], meta:'12 produits · catégorie locale' }, likes:67, boosts:12 },
+  { id:4,  author:'olivia',   type:'event',      minutesAgo:200, content:"**Meetup OFF Berlin** 🎉 On se retrouve le **15 juin à 19h** au Kreuzberg Q, autour d'une bière et de débats data. Tous les niveaux sont bienvenus. RSVP en commentaire ! #OFFmeetup", embed:{ type:'event', title:'Meetup OFF Berlin', meta:'15 juin · 19h · Kreuzberg Q, Berlin · 23 inscrits' }, likes:34, boosts:18 },
+  { id:5,  author:'karim',    type:'translation',minutesAgo:280, content:"Bonne nouvelle : on vient de finaliser la traduction de **920 fiches** d'huile d'olive tunisienne en arabe. Si vous voyez encore des bugs d'affichage RTL, signalez-moi. شكراً 🫒 #i18n #Maghreb", likes:48, boosts:9 },
+  { id:6,  author:'yuki',     type:'thought',    minutesAgo:340, content:"Quick win pour l'app Android : on a réduit le temps de scan barcode de 1.2s à 350ms avec une nouvelle pipeline ML Kit. PR mergée ce matin. Cc @priya pour les tests iOS. #DevLog", likes:89, boosts:21 },
+  { id:7,  author:'helena',   type:'poll',       minutesAgo:420, content:"Sondage pour le prochain meetup OFF Lisboa : quel thème vous intéresse le plus ? #OFFmeetup", poll:{ options:[ {t:'Eco-Score et impact environnemental', v:42}, {t:'OCR et reconnaissance image', v:28}, {t:'Modération et qualité données', v:18}, {t:'Outils mobiles pour scan', v:35} ], total:123 }, likes:28, boosts:6 },
+  { id:8,  author:'sofia',    type:'thought',    minutesAgo:520, content:"On manque cruellement de contributeurs en Bolivie, Paraguay et Uruguay. Si vous y passez en vacances ou y habitez, scannez 3 produits par jour ça change tout 🌎 #Latam #Coverage", likes:67, boosts:14 },
+  { id:9,  author:'thomas',   type:'question',   minutesAgo:600, content:"Question débat : faut-il accepter les produits encore disponibles à l'export mais retirés du marché national ? Cas concret : un yaourt français retiré en FR mais toujours vendu en DE.", likes:31, boosts:2 },
+  { id:10, author:'priya',    type:'achievement',minutesAgo:780, content:"🎉 1000 contributions atteintes aujourd'hui ! Merci à la communauté pour le mentorat dans mes débuts. Badge platine débloqué 🏆 #Milestone", likes:124, boosts:18 },
+  { id:11, author:'kwame',    type:'thought',    minutesAgo:1100,content:"Pour les produits d'Afrique de l'Ouest, le format barcode EAN-8 est très répandu (vs EAN-13 ailleurs). On va ajouter un fallback dans l'app pour mieux gérer ça. #DevLog #Africa", likes:42, boosts:8 }
+];
+
+const SEED_COMMENTS = {
+  1: [
+    { author:'olivia',  minutesAgo:30, content:"Bravo à toute l'équipe ! 🎉 On va organiser un événement spécial à Berlin pour fêter ça." },
+    { author:'diego',   minutesAgo:25, content:"Énorme. Hâte de voir les chiffres au prochain palier." },
+    { author:'anna',    minutesAgo:18, content:"Génial ! Si je peux contribuer à la couverture Afrique de l'Ouest depuis Marseille (relais avec la diaspora), dis-moi." }
+  ],
+  2: [
+    { author:'sofia',   minutesAgo:80, content:"Chez nous au Argentine c'est clairement confiserie. La catégorie laitière c'est trompeur côté nutri." },
+    { author:'helena',  minutesAgo:60, content:"+1 confiserie. Mais on devrait peut-être créer une sous-catégorie 'pâtes à tartiner laitières' ?" }
+  ],
+  4: [
+    { author:'diego',   minutesAgo:180, content:"RSVP ! J'arrive 1h avant pour préparer le matos photo si tu veux." },
+    { author:'thomas',  minutesAgo:160, content:"Trop loin pour moi mais je relaie auprès des contacts FR à Berlin." }
+  ],
+  6: [
+    { author:'priya',   minutesAgo:300, content:"Je teste iOS demain. ML Kit côté Apple c'est plus capricieux mais on devrait avoir des gains aussi." },
+    { author:'stephane',minutesAgo:280, content:"Bravo Yuki 👏 ça va débloquer pas mal de retours utilisateurs sur la lenteur du scan." }
+  ]
+};
+
+const SEED_NOTIFS = [
+  { id:1, type:'follow',  who:'stephane', minutesAgo:120,  unread:true, text:"<b>Stéphane G.</b> a commencé à vous suivre" },
+  { id:2, type:'like',    who:'diego',    minutesAgo:240,  unread:true, text:"<b>Diego F.</b> a aimé votre photo de la bouillabaisse marseillaise" },
+  { id:3, type:'mention', who:'maya',     minutesAgo:360,  unread:true, text:"<b>Maya R.</b> vous a mentionnée : « cc @anna pour ton avis sur la catégorisation des épices italiennes »" },
+  { id:4, type:'like',    who:'multiple', minutesAgo:1440, unread:true, count:5, text:"<b>5 personnes</b> ont aimé votre commentaire sur le post de Stéphane G." },
+  { id:5, type:'boost',   who:'olivia',   minutesAgo:2880, unread:true, text:"<b>Olivia K.</b> a partagé votre publication sur les hacks d'accessibilité OFF" },
+  { id:6, type:'follow',  who:'karim',    minutesAgo:4320, unread:true, text:"<b>Karim B.</b> a accepté votre demande de suivi" }
+];
+
+const SEED_DMS = {
+  'stephane': [
+    { from:'stephane', minutesAgo:120, text:"Salut Anna ! Tu serais dispo pour un call cette semaine sur la PR #2847 ?" },
+    { from:'me',       minutesAgo:115, text:"Hello Stéphane, oui bien sûr. Jeudi 15h ça te va ?" },
+    { from:'stephane', minutesAgo:112, text:"Parfait, je t'envoie un lien Meet." },
+    { from:'stephane', minutesAgo:30,  text:"Au fait, j'ai vu ton profil sur la carte communautaire, ÉcoleAlerte a l'air super 🙌" }
+  ],
+  'diego': [
+    { from:'diego',    minutesAgo:280, text:"Tes photos de Marseille pour les produits méditerranéens sont top 🙌" },
+    { from:'me',       minutesAgo:270, text:"Merci ! J'aimerais bien voir comment tu travailles à São Paulo, tu as un workflow particulier ?" },
+    { from:'diego',    minutesAgo:240, text:"Ouais je peux t'envoyer mon setup. Lightroom preset + fond neutre, c'est la base." }
+  ],
+  'karim': [
+    { from:'karim',    minutesAgo:600, text:"Salut ! Une suggestion pour la trad de 'sans gluten' en arabe : خالٍ من الغلوتين plutôt que بدون غلوتين, plus académique." },
+    { from:'me',       minutesAgo:580, text:"Ah top, je note. Tu as un glossaire de référence pour les termes nutrition ?" }
+  ]
+};
+
+const TRENDING_TAGS = [
+  { tag:'NutriScore',    count:142, period:'24h' },
+  { tag:'PhotoOFF',      count:89,  period:'24h' },
+  { tag:'DataQuality',   count:67,  period:'24h' },
+  { tag:'OFFmeetup',     count:54,  period:'semaine' },
+  { tag:'Vegan',         count:48,  period:'24h' },
+  { tag:'FoodWaste',     count:42,  period:'semaine' },
+  { tag:'LocalProducer', count:38,  period:'24h' },
+  { tag:'DevLog',        count:31,  period:'24h' }
+];
+
+const TOPICS = [
+  { tag:'Africa',     title:"Couverture Afrique de l'Ouest", meta:"23 nouveaux contributeurs · 1.2k produits ce mois", featured:true },
+  { tag:'Coverage',   title:"Trous géographiques",            meta:"Carte de chaleur des zones sous-couvertes" },
+  { tag:'EcoScore',   title:"Eco-Score V3",                   meta:"Nouvelle méthodologie en discussion" },
+  { tag:'OCR',        title:"OCR multilingue",                meta:"Recherche sur étiquettes asiatiques" }
+];
+
+/* ════════════════════════════════════════════════════════════
+   STATE
+   ════════════════════════════════════════════════════════════ */
+const STORAGE = 'off-network-v3';
+const State = {
+  view: 'feed',
+  selectedHashtag: null,
+  selectedProfile: null,
+  selectedDM: 'stephane',
+  posts: [],
+  comments: {},
+  likes: new Set(),
+  boosts: new Set(),
+  follows: new Set(),
+  notifications: [],
+  openComments: new Set()
+};
+
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem(STORAGE)) || {};
+    State.posts = s.posts || [...SEED_POSTS];
+    State.comments = s.comments || { ...SEED_COMMENTS };
+    State.likes = new Set(s.likes || []);
+    State.boosts = new Set(s.boosts || []);
+    State.follows = new Set(s.follows || ['stephane','olivia']);
+    State.notifications = s.notifications || [...SEED_NOTIFS];
+  } catch(e) {
+    State.posts = [...SEED_POSTS];
+    State.comments = { ...SEED_COMMENTS };
+    State.notifications = [...SEED_NOTIFS];
+    State.follows = new Set(['stephane','olivia']);
+  }
+}
+function saveState() {
+  localStorage.setItem(STORAGE, JSON.stringify({
+    posts: State.posts,
+    comments: State.comments,
+    likes: [...State.likes],
+    boosts: [...State.boosts],
+    follows: [...State.follows],
+    notifications: State.notifications
+  }));
+}
+
+/* ════════════════════════════════════════════════════════════
+   UTILS
+   ════════════════════════════════════════════════════════════ */
+function escapeHtml(s) {
+  return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function timeAgo(min) {
+  if (min < 1) return "à l'instant";
+  if (min < 60) return `${min}min`;
+  if (min < 1440) return `${Math.round(min/60)}h`;
+  if (min < 10080) return `${Math.round(min/1440)}j`;
+  return `${Math.round(min/10080)}sem`;
+}
+function initials(name) {
+  return name.split(/\s+/).map(s=>s[0]).slice(0,2).join('').toUpperCase();
+}
+function renderRichText(text) {
+  let html = escapeHtml(text);
+  html = html.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  html = html.replace(/\*(.+?)\*/g, '<i>$1</i>');
+  html = html.replace(/#(\w+)/g, '<span class="tag" data-tag="$1">#$1</span>');
+  html = html.replace(/@(\w+)/g, '<span class="mention" data-mention="$1">@$1</span>');
+  return html;
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastT);
+  window._toastT = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ════════════════════════════════════════════════════════════
+   ICONS
+   ════════════════════════════════════════════════════════════ */
+const ICN = {
+  reply:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+  heart:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  heartF: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  boost:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>',
+  share:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',
+  follow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>',
+  like:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  at:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg>',
+  bell:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+  // composer
+  ctText:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>',
+  ctQ:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  ctPhoto:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+  ctPoll:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="20" x2="6" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="14"/></svg>',
+  ctEvent:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+  fed:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10"/></svg>',
+  // pin types
+  question:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>'
+};
+
+/* ════════════════════════════════════════════════════════════
+   ROUTER
+   ════════════════════════════════════════════════════════════ */
+function setView(v, params = {}) {
+  State.view = v;
+  if (params.profile) State.selectedProfile = params.profile;
+  if (params.hashtag) State.selectedHashtag = params.hashtag; else State.selectedHashtag = null;
+
+  // nav active state
+  document.querySelectorAll('nav.left .nav-item[data-view]').forEach(n => {
+    n.classList.toggle('active', n.dataset.view === v);
+  });
+
+  render();
+}
+
+function render() {
+  const main = document.getElementById('main-content');
+  const rail = document.getElementById('right-rail');
+
+  if      (State.view === 'feed')          { main.innerHTML = renderFeed();          rail.innerHTML = renderRail(); }
+  else if (State.view === 'explorer')      { main.innerHTML = renderExplorer();      rail.innerHTML = renderRail(); }
+  else if (State.view === 'notifications') { main.innerHTML = renderNotifications(); rail.innerHTML = renderRail(); }
+  else if (State.view === 'messages')      { main.innerHTML = renderMessages();      rail.innerHTML = ''; }
+  else if (State.view === 'profile')       { main.innerHTML = renderProfile(ME);     rail.innerHTML = renderRail(); }
+  else if (State.view === 'profile-other') { main.innerHTML = renderProfile(State.selectedProfile); rail.innerHTML = renderRail(); }
+
+  wireInteractions();
+  main.scrollTop = 0;
+}
+
+/* ════════════════════════════════════════════════════════════
+   FEED VIEW
+   ════════════════════════════════════════════════════════════ */
+function renderFeed() {
+  const title = State.selectedHashtag
+    ? `<h2>#${State.selectedHashtag}</h2><div class="sub">Tous les posts avec cette étiquette · <a href="#" onclick="clearHashtag()" style="color:var(--terracotta);text-decoration:none;font-weight:600;">↩ tout afficher</a></div>`
+    : `<h2>Fil communautaire</h2><div class="sub">Publications et activités des contributeurs Open Food Facts</div>`;
+
+  let posts = State.posts;
+  if (State.selectedHashtag) {
+    posts = posts.filter(p => p.content.toLowerCase().includes('#' + State.selectedHashtag.toLowerCase()));
+  }
+
+  return `
+    <div class="view-header">${title}</div>
+    ${State.selectedHashtag ? '' : renderComposer()}
+    <div id="post-list">
+      ${posts.map(renderPost).join('')}
+    </div>
+  `;
+}
+
+function renderComposer() {
+  return `
+    <div class="composer">
+      <div class="av">${initials(CONTRIBUTORS[ME].name)}</div>
+      <div class="composer-body">
+        <textarea id="composer-text" placeholder="Partagez une trouvaille, posez une question, annoncez un meetup… (#hashtag pour les sujets, @pseudo pour mentionner)" maxlength="280"></textarea>
+        <div class="composer-tools">
+          <div class="composer-type">
+            <button class="type-btn active" data-type="thought"   title="Pensée">${ICN.ctText}</button>
+            <button class="type-btn"        data-type="question"  title="Question">${ICN.ctQ}</button>
+            <button class="type-btn"        data-type="photo"     title="Avec média">${ICN.ctPhoto}</button>
+            <button class="type-btn"        data-type="poll"      title="Sondage">${ICN.ctPoll}</button>
+            <button class="type-btn"        data-type="event"     title="Événement">${ICN.ctEvent}</button>
+          </div>
+          <div class="composer-end">
+            <span class="char-count" id="char-count">280</span>
+            <button class="btn-post" id="post-btn" disabled>Publier</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderPost(p) {
+  const author = CONTRIBUTORS[p.author];
+  if (!author) return '';
+
+  const liked   = State.likes.has(p.id);
+  const boosted = State.boosts.has(p.id);
+  const totalLikes  = (p.likes || 0)  + (liked ? 1 : 0);
+  const totalBoosts = (p.boosts || 0) + (boosted ? 1 : 0);
+  const comments = State.comments[p.id] || [];
+  const commentsOpen = State.openComments.has(p.id);
+
+  const pinClass  = p.type;
+  const pinLabels = { thought:'Pensée', question:'Question', photo:'Média', event:'Événement', poll:'Sondage', activity:'Activité', announce:'Annonce', translation:'Traduction', achievement:'Jalon' };
+
+  let embedHtml = '';
+  if (p.embed?.type === 'product') {
+    embedHtml = `
+      <div class="embed product">
+        <div class="embed-label">${escapeHtml(p.embed.meta || 'Produits ajoutés')}</div>
+        <div class="embed-items">${(p.embed.items||[]).map(i => `<span class="embed-pill">${escapeHtml(i)}</span>`).join('')}</div>
+      </div>
+    `;
+  } else if (p.embed?.type === 'event') {
+    embedHtml = `
+      <div class="embed">
+        <div class="embed-label">⌚ Événement local</div>
+        <div class="embed-title">${escapeHtml(p.embed.title)}</div>
+        <div class="embed-meta">${escapeHtml(p.embed.meta)}</div>
+      </div>
+    `;
+  }
+
+  let pollHtml = '';
+  if (p.poll) {
+    pollHtml = `
+      <div class="poll-options">
+        ${p.poll.options.map((opt, i) => {
+          const pct = Math.round((opt.v / p.poll.total) * 100);
+          return `
+            <div class="poll-opt voted" style="--pct:${pct}%;" onclick="event.stopPropagation()">
+              <div class="poll-opt-text">
+                <span>${escapeHtml(opt.t)}</span>
+                <span class="pct">${pct}%</span>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      <div class="poll-total">${p.poll.total} votes</div>
+    `;
+  }
+
+  let commentsHtml = '';
+  if (comments.length || commentsOpen) {
+    commentsHtml = `
+      <div class="comments ${commentsOpen ? 'open' : ''}">
+        ${comments.map(c => {
+          const cau = CONTRIBUTORS[c.author];
+          if (!cau) return '';
+          return `
+            <div class="comment">
+              <div class="av" style="background:${cau.avColor};color:#FAF7F2;">${initials(cau.name)}</div>
+              <div class="comment-body">
+                <div class="comment-head">
+                  <span class="comment-name post-name" data-profile="${c.author}">${escapeHtml(cau.name)}</span>
+                  <span class="comment-time">${timeAgo(c.minutesAgo)}</span>
+                </div>
+                <div class="comment-content">${renderRichText(c.content)}</div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+        <div class="comment-input" onclick="event.stopPropagation()">
+          <input type="text" placeholder="Répondre à ${escapeHtml(author.name)}…" data-post-id="${p.id}" class="reply-input">
+          <button class="reply-btn" data-post-id="${p.id}">Envoyer</button>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <article class="post" data-post-id="${p.id}">
+      <div class="av" style="background:${author.avColor};color:#FAF7F2;">${initials(author.name)}</div>
+      <div class="post-body">
+        <div class="post-head">
+          <span class="post-name" data-profile="${p.author}">${escapeHtml(author.name)}</span>
+          <span class="post-handle">@${p.author}</span>
+          <span class="post-pin ${pinClass}">${pinLabels[p.type] || 'Post'}</span>
+          <span class="post-time">${timeAgo(p.minutesAgo)}</span>
+        </div>
+        <div class="post-content">${renderRichText(p.content)}</div>
+        ${embedHtml}
+        ${pollHtml}
+        <div class="post-actions">
+          <button class="pa-btn" data-act="comment" data-id="${p.id}">${ICN.reply}<span class="count">${comments.length}</span></button>
+          <button class="pa-btn ${boosted?'boosted':''}" data-act="boost" data-id="${p.id}">${ICN.boost}<span class="count">${totalBoosts}</span></button>
+          <button class="pa-btn ${liked?'liked':''}" data-act="like" data-id="${p.id}">${liked ? ICN.heartF : ICN.heart}<span class="count">${totalLikes}</span></button>
+          <button class="pa-btn fed-btn" data-act="fed" data-id="${p.id}">↗ Fediverse</button>
+        </div>
+        ${commentsHtml}
+      </div>
+    </article>
+  `;
+}
+
+/* ════════════════════════════════════════════════════════════
+   EXPLORER VIEW
+   ════════════════════════════════════════════════════════════ */
+function renderExplorer() {
+  return `
+    <div class="view-header">
+      <h2>Explorer</h2>
+      <div class="sub">Sujets, hashtags et contributeurs à découvrir</div>
+    </div>
+
+    <div class="explorer-search">
+      <input type="text" placeholder="Rechercher des posts, des contributeurs, des hashtags…">
+    </div>
+
+    <div class="explorer-section">
+      <div class="explorer-h">Tendances cette semaine</div>
+      <div class="trending">
+        ${TRENDING_TAGS.map(t => `
+          <div class="trend" data-hashtag="${t.tag}">
+            <div class="trend-tag">#${t.tag}</div>
+            <div class="trend-meta">${t.count} publications · ${t.period}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="explorer-section">
+      <div class="explorer-h">Sujets curatés</div>
+      <div class="topics-grid">
+        ${TOPICS.map(t => `
+          <div class="topic-card" data-hashtag="${t.tag}">
+            ${t.featured ? '<span class="tag">À LA UNE</span>' : ''}
+            <div class="t">${escapeHtml(t.title)}</div>
+            <div class="m">${escapeHtml(t.meta)}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="explorer-section">
+      <div class="explorer-h">Contributeurs à découvrir</div>
+      <div>
+        ${Object.entries(CONTRIBUTORS).filter(([k]) => k !== ME).slice(0,5).map(([k,c]) => `
+          <div class="suggest-mini">
+            <div class="av" style="background:${c.avColor};color:#FAF7F2;">${initials(c.name)}</div>
+            <div class="info">
+              <div class="nm" data-profile="${k}">${escapeHtml(c.name)}</div>
+              <div class="role">${escapeHtml(c.city)} · ${c.roles.join(' · ')}</div>
+            </div>
+            <button class="mini-follow ${State.follows.has(k)?'following':''}" data-follow="${k}">${State.follows.has(k)?'Suivi':'+ Suivre'}</button>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+/* ════════════════════════════════════════════════════════════
+   NOTIFICATIONS VIEW
+   ════════════════════════════════════════════════════════════ */
+function renderNotifications() {
+  const unread = State.notifications.filter(n => n.unread).length;
+
+  return `
+    <div class="view-header">
+      <h2>Notifications</h2>
+      <div class="sub">${unread} non lues · <a href="#" onclick="markAllRead()" style="color:var(--terracotta);text-decoration:none;font-weight:600;">Tout marquer comme lu</a></div>
+    </div>
+    <div class="notif-list">
+      ${State.notifications.map(n => {
+        const who = n.who === 'multiple' ? null : CONTRIBUTORS[n.who];
+        const iconBg = { follow:'var(--forest)', like:'var(--terracotta)', mention:'var(--ochre)', boost:'var(--moss)' }[n.type] || 'var(--ink)';
+        const iconSvg = { follow:ICN.follow, like:ICN.heart, mention:ICN.at, boost:ICN.boost }[n.type] || ICN.bell;
+        const action = n.type === 'follow' ? `<button class="notif-action" data-follow="${n.who}">${State.follows.has(n.who)?'Suivi':'Suivre en retour'}</button>` : '';
+        return `
+          <div class="notif ${n.unread?'unread':''}" data-notif-id="${n.id}">
+            <div class="notif-icon" style="background:${iconBg};">${iconSvg}</div>
+            <div class="notif-text">
+              ${n.text}
+              <div class="notif-time">${timeAgo(n.minutesAgo)}</div>
+            </div>
+            ${action}
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+/* ════════════════════════════════════════════════════════════
+   MESSAGES VIEW
+   ════════════════════════════════════════════════════════════ */
+function renderMessages() {
+  const conv = State.selectedDM;
+  const messages = SEED_DMS[conv] || [];
+  const partner = CONTRIBUTORS[conv];
+
+  return `
+    <div class="view-header" style="padding:14px 20px;">
+      <h2 style="font-size:20px;">Messages</h2>
+    </div>
+    <div class="messages-layout">
+      <div class="conv-list">
+        ${Object.keys(SEED_DMS).map(k => {
+          const c = CONTRIBUTORS[k];
+          const last = SEED_DMS[k][SEED_DMS[k].length-1];
+          return `
+            <div class="conv-item ${k===conv?'active':''}" data-dm="${k}">
+              <div class="av" style="background:${c.avColor};color:#FAF7F2;">${initials(c.name)}</div>
+              <div class="info">
+                <div class="n">${escapeHtml(c.name)}</div>
+                <div class="last">${escapeHtml(last.text.slice(0,40))}…</div>
+              </div>
+              <div class="t">${timeAgo(last.minutesAgo)}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      <div class="conv-view">
+        <div class="conv-header">
+          <div class="av" style="width:36px;height:36px;border-radius:50%;background:${partner.avColor};color:#FAF7F2;display:grid;place-items:center;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;">${initials(partner.name)}</div>
+          <div>
+            <div style="font-weight:700;font-size:14px;">${escapeHtml(partner.name)}</div>
+            <div style="font-size:11px;color:var(--moss);">@${conv} · ${escapeHtml(partner.city)}</div>
+          </div>
+          <button class="mini-follow ${State.follows.has(conv)?'following':''}" data-follow="${conv}" style="margin-left:auto;">${State.follows.has(conv)?'Suivi':'Suivre'}</button>
+        </div>
+        <div class="conv-thread">
+          ${messages.map(m => `
+            <div class="msg ${m.from==='me'?'me':'them'}">${escapeHtml(m.text)}</div>
+            <div class="msg-time" style="--align:${m.from==='me'?'flex-end':'flex-start'};">${timeAgo(m.minutesAgo)}</div>
+          `).join('')}
+        </div>
+        <div class="msg-compose">
+          <input type="text" placeholder="Tapez un message…" id="dm-input">
+          <button id="dm-send">Envoyer</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PROFILE VIEW
+   ════════════════════════════════════════════════════════════ */
+function renderProfile(key) {
+  const c = CONTRIBUTORS[key];
+  if (!c) return '<div class="view-header"><h2>Profil introuvable</h2></div>';
+
+  const isMe = key === ME;
+  const isFollowing = State.follows.has(key);
+  const userPosts = State.posts.filter(p => p.author === key);
+  const followers = isMe ? 247 : Math.floor(Math.random()*500)+50;
+  const following = isMe ? State.follows.size : Math.floor(Math.random()*300)+30;
+
+  return `
+    <div class="profile-cover"></div>
+    <div class="profile-header">
+      <div class="profile-av" style="background:${c.avColor};color:#FAF7F2;">${initials(c.name)}</div>
+      <div class="profile-actions-row">
+        ${isMe ? `
+          <button class="btn-ghost" style="background:var(--paper-2);border:1px solid var(--rule);padding:8px 16px;border-radius:999px;font-weight:600;font-size:13px;">Modifier le profil</button>
+        ` : `
+          <button class="mini-follow ${isFollowing?'following':''}" data-follow="${key}" style="padding:8px 18px;font-size:13px;">${isFollowing?'★ Vous suivez':'+ Suivre'}</button>
+          <button class="btn-ghost" style="background:var(--paper-2);border:1px solid var(--rule);padding:8px 16px;border-radius:999px;font-weight:600;font-size:13px;" onclick="openDM('${key}')">Message</button>
+        `}
+      </div>
+      <div class="profile-name-row">
+        <div class="profile-name">${escapeHtml(c.name)}</div>
+        ${c.verified ? '<span class="badge-verif">✓ Vérifié</span>' : ''}
+      </div>
+      <div class="profile-handle-line">@${key} · <span style="font-family:monospace;color:var(--forest);">@${key}@community.openfoodfacts.org</span></div>
+      <div class="profile-bio-prose">${escapeHtml(c.bio)}</div>
+      <div class="profile-meta">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${escapeHtml(c.city)}</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Membre depuis ${c.joined}</span>
+        <span>🗣️ ${c.langs.join(', ')}</span>
+      </div>
+      <div class="profile-stats-row">
+        <span><b>${userPosts.length}</b>publications</span>
+        <span><b>${following}</b>abonnements</span>
+        <span><b>${followers}</b>abonnés</span>
+        <span><b>${c.products.toLocaleString('fr-FR')}</b>produits OFF</span>
+        <span><b>${c.photos.toLocaleString('fr-FR')}</b>photos</span>
+      </div>
+    </div>
+    <div class="profile-tabs">
+      <div class="profile-tab active">Publications</div>
+      <div class="profile-tab">Réponses</div>
+      <div class="profile-tab">Médias</div>
+      <div class="profile-tab">J'aime</div>
+    </div>
+    <div>
+      ${userPosts.length ? userPosts.map(renderPost).join('') : `
+        <div style="text-align:center;padding:60px 20px;color:var(--moss);">
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-style:italic;margin-bottom:6px;">Pas encore de publications</div>
+          <div style="font-size:13px;">${isMe ? 'Publiez votre première pensée depuis le Fil.' : `${c.name} n'a pas encore publié sur le réseau.`}</div>
+        </div>
+      `}
+    </div>
+  `;
+}
+
+/* ════════════════════════════════════════════════════════════
+   RIGHT RAIL
+   ════════════════════════════════════════════════════════════ */
+function renderRail() {
+  const sugg = Object.entries(CONTRIBUTORS)
+    .filter(([k]) => k !== ME && !State.follows.has(k))
+    .slice(0, 4);
+
+  return `
+    <div class="card">
+      <div class="card-title">Tendances · 24h</div>
+      <div class="trending">
+        ${TRENDING_TAGS.slice(0,5).map(t => `
+          <div class="trend" data-hashtag="${t.tag}">
+            <div class="trend-tag">#${t.tag}</div>
+            <div class="trend-meta">${t.count} publications</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Suggestions</div>
+      ${sugg.map(([k,c]) => `
+        <div class="suggest-mini">
+          <div class="av" style="background:${c.avColor};color:#FAF7F2;">${initials(c.name)}</div>
+          <div class="info">
+            <div class="nm" data-profile="${k}">${escapeHtml(c.name)}</div>
+            <div class="role">${escapeHtml(c.city.split(',')[0])}</div>
+          </div>
+          <button class="mini-follow" data-follow="${k}">+ Suivre</button>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="fed-card">
+      <div class="eyebrow">⚡ ActivityPub · Fediverse</div>
+      <h3>Votre profil est fédéré</h3>
+      <p>Suivez et soyez suivi depuis Mastodon, BlueSky (via Bridgy Fed), Pixelfed et toute instance ActivityPub.</p>
+      <div class="fed-handle" onclick="copyHandle()">@anna@community.openfoodfacts.org</div>
+      <button class="fed-cta" onclick="openFederationPreview()">Voir l'aperçu →</button>
+    </div>
+  `;
+}
+
+/* ════════════════════════════════════════════════════════════
+   INTERACTIONS WIRING
+   ════════════════════════════════════════════════════════════ */
+function wireInteractions() {
+  // Composer
+  const ta = document.getElementById('composer-text');
+  if (ta) {
+    const btn = document.getElementById('post-btn');
+    const cc = document.getElementById('char-count');
+    ta.addEventListener('input', () => {
+      const len = ta.value.length;
+      const remaining = 280 - len;
+      cc.textContent = remaining;
+      cc.classList.toggle('warn', remaining < 30);
+      btn.disabled = len === 0;
+      ta.style.height = 'auto';
+      ta.style.height = Math.min(ta.scrollHeight, 200) + 'px';
+    });
+    btn.onclick = publishPost;
+
+    document.querySelectorAll('.type-btn').forEach(b => {
+      b.onclick = () => {
+        document.querySelectorAll('.type-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+      };
+    });
+  }
+
+  // Profile clicks
+  document.querySelectorAll('[data-profile]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      const key = el.dataset.profile;
+      if (key === ME) setView('profile');
+      else setView('profile-other', { profile: key });
+    });
+  });
+
+  // Hashtag clicks
+  document.querySelectorAll('[data-hashtag], .tag').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      const tag = el.dataset.hashtag || el.dataset.tag;
+      setView('feed', { hashtag: tag });
+    });
+  });
+
+  // Mentions
+  document.querySelectorAll('.mention').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      const key = el.dataset.mention;
+      if (CONTRIBUTORS[key]) setView('profile-other', { profile: key });
+    });
+  });
+
+  // Post actions
+  document.querySelectorAll('.pa-btn').forEach(b => {
+    b.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = parseInt(b.dataset.id);
+      const act = b.dataset.act;
+      if (act === 'like') {
+        if (State.likes.has(id)) State.likes.delete(id);
+        else State.likes.add(id);
+        saveState();
+        render();
+      } else if (act === 'boost') {
+        if (State.boosts.has(id)) State.boosts.delete(id);
+        else { State.boosts.add(id); toast('↗ Boosté · partagé avec vos abonnés et sur le Fediverse'); }
+        saveState();
+        render();
+      } else if (act === 'comment') {
+        if (State.openComments.has(id)) State.openComments.delete(id);
+        else State.openComments.add(id);
+        render();
+      } else if (act === 'fed') {
+        openFederationPreview(id);
+      }
+    });
+  });
+
+  // Reply submit
+  document.querySelectorAll('.reply-btn').forEach(b => {
+    b.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = parseInt(b.dataset.postId);
+      const input = document.querySelector(`.reply-input[data-post-id="${id}"]`);
+      if (!input?.value.trim()) return;
+      addComment(id, input.value.trim());
+      input.value = '';
+    });
+  });
+  document.querySelectorAll('.reply-input').forEach(i => {
+    i.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && i.value.trim()) {
+        addComment(parseInt(i.dataset.postId), i.value.trim());
+        i.value = '';
+      }
+    });
+  });
+
+  // Follow buttons
+  document.querySelectorAll('[data-follow]').forEach(b => {
+    b.addEventListener('click', e => {
+      e.stopPropagation();
+      const key = b.dataset.follow;
+      toggleFollow(key);
+    });
+  });
+
+  // Nav
+  document.querySelectorAll('nav.left .nav-item[data-view]').forEach(n => {
+    n.addEventListener('click', () => setView(n.dataset.view));
+  });
+
+  // Trends in rail
+  document.querySelectorAll('.trend').forEach(t => {
+    t.addEventListener('click', () => setView('feed', { hashtag: t.dataset.hashtag }));
+  });
+  document.querySelectorAll('.topic-card').forEach(t => {
+    t.addEventListener('click', () => setView('feed', { hashtag: t.dataset.hashtag }));
+  });
+
+  // DM
+  document.querySelectorAll('[data-dm]').forEach(d => {
+    d.addEventListener('click', () => { State.selectedDM = d.dataset.dm; render(); });
+  });
+  const dmSend = document.getElementById('dm-send');
+  if (dmSend) {
+    dmSend.onclick = () => {
+      const inp = document.getElementById('dm-input');
+      if (!inp.value.trim()) return;
+      SEED_DMS[State.selectedDM].push({ from:'me', minutesAgo:0, text:inp.value.trim() });
+      inp.value = '';
+      render();
+    };
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   ACTIONS
+   ════════════════════════════════════════════════════════════ */
+function publishPost() {
+  const ta = document.getElementById('composer-text');
+  const type = document.querySelector('.type-btn.active')?.dataset.type || 'thought';
+  const text = ta.value.trim();
+  if (!text) return;
+
+  const newPost = {
+    id: Date.now(),
+    author: ME,
+    type,
+    minutesAgo: 0,
+    content: text,
+    likes: 0,
+    boosts: 0
+  };
+
+  State.posts.unshift(newPost);
+  saveState();
+  ta.value = '';
+  ta.style.height = 'auto';
+  toast('✓ Publié · relayé sur le Fediverse');
+  render();
+}
+
+function addComment(postId, text) {
+  if (!State.comments[postId]) State.comments[postId] = [];
+  State.comments[postId].push({
+    author: ME,
+    minutesAgo: 0,
+    content: text
+  });
+  saveState();
+  render();
+}
+
+function toggleFollow(key) {
+  if (State.follows.has(key)) {
+    State.follows.delete(key);
+    toast(`Vous ne suivez plus @${key}`);
+  } else {
+    State.follows.add(key);
+    toast(`✓ Vous suivez maintenant @${key}`);
+  }
+  saveState();
+  render();
+}
+
+function clearHashtag() {
+  State.selectedHashtag = null;
+  render();
+}
+
+function markAllRead() {
+  State.notifications.forEach(n => n.unread = false);
+  saveState();
+  document.getElementById('notif-badge').style.display = 'none';
+  render();
+}
+
+function openDM(key) {
+  State.selectedDM = key;
+  setView('messages');
+}
+
+function copyHandle() {
+  navigator.clipboard?.writeText('@anna@community.openfoodfacts.org');
+  toast('✓ Handle copié dans le presse-papier');
+}
+
+/* ════════════════════════════════════════════════════════════
+   FEDERATION PREVIEW (the wow moment)
+   ════════════════════════════════════════════════════════════ */
+function openFederationPreview(postId) {
+  const post = postId ? State.posts.find(p => p.id === postId) : State.posts[0];
+  const author = CONTRIBUTORS[post.author];
+  const content = post.content.replace(/#(\w+)/g, '<span style="color:var(--terracotta);font-weight:600;">#$1</span>')
+                                .replace(/@(\w+)/g, '<span style="color:var(--forest);font-weight:600;">@$1</span>');
+
+  document.getElementById('modal-content').className = 'modal-box lg';
+  document.getElementById('modal-content').innerHTML = `
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div class="modal-h">Aperçu fédération</div>
+    <div class="modal-sub">Voici comment ce post de <b>${escapeHtml(author.name)}</b> apparaît dans le Fediverse — publié <b>une seule fois</b> sur Open Food Facts, propagé partout via ActivityPub.</div>
+
+    <div class="fed-preview">
+
+      <div class="fed-col">
+        <div class="fed-col-title"><span class="dot" style="background:var(--forest);"></span>OFF Community (origine)</div>
+        <div class="fed-mock off">
+          <div class="fed-mock-head">
+            <div class="fed-mock-av" style="background:${author.avColor};">${initials(author.name)}</div>
+            <div class="fed-mock-meta">
+              <b>${escapeHtml(author.name)}</b><br>
+              <span class="h">@${post.author}@community.openfoodfacts.org · ${timeAgo(post.minutesAgo)}</span>
+            </div>
+          </div>
+          <div class="fed-mock-body">${content}</div>
+          <div class="fed-mock-actions">
+            <span>💬 ${(State.comments[post.id]||[]).length}</span>
+            <span>↗ ${post.boosts || 0}</span>
+            <span>♡ ${post.likes || 0}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="fed-col">
+        <div class="fed-col-title"><span class="dot" style="background:var(--mastodon);"></span>Vu depuis Mastodon</div>
+        <div class="fed-mock mastodon">
+          <div class="fed-mock-head">
+            <div class="fed-mock-av" style="background:${author.avColor};">${initials(author.name)}</div>
+            <div class="fed-mock-meta">
+              <b>${escapeHtml(author.name)}</b><br>
+              <span class="h">@${post.author}@community.openfoodfacts.org</span>
+            </div>
+          </div>
+          <div class="fed-mock-body">${content}</div>
+          <div class="fed-mock-actions">
+            <span>💬</span>
+            <span>🔁 ${Math.floor((post.boosts||0)*0.3)}</span>
+            <span>★ ${Math.floor((post.likes||0)*0.4)}</span>
+            <span style="margin-left:auto;font-style:italic;">via mastodon.social</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="fed-col">
+        <div class="fed-col-title"><span class="dot" style="background:var(--bluesky);"></span>Vu depuis BlueSky</div>
+        <div class="fed-mock bluesky">
+          <div class="fed-mock-head">
+            <div class="fed-mock-av" style="background:${author.avColor};">${initials(author.name)}</div>
+            <div class="fed-mock-meta">
+              <b>${escapeHtml(author.name)}</b><br>
+              <span class="h">@${post.author}.community.openfoodfacts.org.ap.brid.gy</span>
+            </div>
+          </div>
+          <div class="fed-mock-body">${content}</div>
+          <div class="fed-mock-actions">
+            <span>💬</span>
+            <span>↗</span>
+            <span>♡ ${Math.floor((post.likes||0)*0.2)}</span>
+            <span style="margin-left:auto;font-style:italic;">via Bridgy Fed</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="fed-explain">
+      <b>Comment ça marche techniquement</b> — Quand un contributeur publie sur Open Food Facts Community, un objet <code style="background:var(--paper);padding:1px 5px;border-radius:3px;font-family:monospace;font-size:11px;">Create Note</code> ActivityPub est envoyé à tous les serveurs distants qui suivent ce compte. Mastodon, Pixelfed, PeerTube reçoivent et rendent le contenu nativement. BlueSky est touché via <a href="https://fed.brid.gy" target="_blank" style="color:var(--terracotta);font-weight:600;">Bridgy Fed</a> qui bridge gratuitement AP ↔ AT Protocol. Les commentaires distants reviennent par l'<i>inbox</i> du contributeur OFF. Tout est signé HTTP Signatures, sécurité garantie.
+    </div>
+
+    <div class="modal-actions" style="margin-top:18px;display:flex;justify-content:flex-end;gap:8px;">
+      <button class="btn-post" onclick="closeModal()">J'ai compris</button>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+/* ════════════════════════════════════════════════════════════
+   INIT
+   ════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  render();
+
+  document.getElementById('modal').addEventListener('click', e => {
+    if (e.target.id === 'modal') closeModal();
+  });
+
+  // Header me-chip
+  document.querySelector('.me-chip').onclick = () => setView('profile');
+
+  // Update notification badge
+  const unread = State.notifications.filter(n => n.unread).length;
+  document.getElementById('notif-badge').textContent = unread || '';
+  if (!unread) document.getElementById('notif-badge').style.display = 'none';
+});
+</script>
+<script src="app.js" defer></script>
+</body>
+</html>

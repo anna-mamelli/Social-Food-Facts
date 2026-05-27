@@ -10,31 +10,36 @@
 
 /* ─── 1. DESIGN TOKENS ──────────────────────────────────── */
 :root {
-  /* Surfaces */
-  --paper: #FAF7F2;
-  --paper-2: #F2EDE2;
-  --paper-3: #EDE6D5;
+  /* ═══════════════════════════════════════════════════════════
+     PALETTE OPEN FOOD FACTS — couleurs officielles
+     Source : fr.openfoodfacts.org, ratio AA respecté.
+     ═══════════════════════════════════════════════════════════ */
 
-  /* Texte */
-  --ink: #1F2418;
-  --ink-soft: #3A3F32;
-  --ink-mute: #5A7A4E;
+  /* Surfaces — fond blanc dominant comme OFF */
+  --paper: #FFFFFF;
+  --paper-2: #F6F3EE;
+  --paper-3: #ECE6DC;
 
-  /* Accents */
-  --forest: #2D4A2B;
-  --moss: #5A7A4E;
-  --terracotta: #C8553D;
-  --ochre: #D4A574;
-  --plum: #6B3447;
+  /* Texte — brun foncé OFF, pas du noir pur */
+  --ink: #341F0E;
+  --ink-soft: #5C4A36;
+  --ink-mute: #8E7C68;
+
+  /* Accents — orange OFF et brun chaud */
+  --forest: #341F0E;        /* alias pour éviter de tout casser : brun OFF */
+  --moss: #8E7C68;          /* alias : brun clair */
+  --terracotta: #FF8714;    /* orange OFF officiel */
+  --ochre: #F4A340;         /* orange clair */
+  --plum: #341F0E;
 
   /* Trames */
-  --rule: #DDD5C2;
-  --rule-soft: #E8E2D5;
+  --rule: #E5DDD0;
+  --rule-soft: #F0EAE0;
 
   /* Statuts */
-  --danger: #C8553D;
-  --warn: #D4A574;
-  --ok: #5A7A4E;
+  --danger: #E63E11;
+  --warn: #F4A340;
+  --ok: #4F8A2E;
 
   /* Nutri-Score (officiel OFF) */
   --ns-a: #038141;
@@ -73,12 +78,12 @@
   --r-lg: 14px;
   --r-xl: 18px;
 
-  /* Typographie — système d'abord (éco-conception), Fraunces/Manrope si chargés */
-  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
-  --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Typographie — OFF utilise du sans-serif simple, pas de serif italique */
+  --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
   /* Focus visible (RGAA 10.7) */
-  --focus-ring: 3px solid #2D4A2B;
+  --focus-ring: 3px solid #FF8714;
   --focus-offset: 2px;
 }
 
@@ -188,10 +193,10 @@ a:focus-visible, button:focus-visible { z-index: 1; }
 /* ─── 5. TYPOGRAPHIE ────────────────────────────────────── */
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  font-weight: 500;
-  font-style: italic;
-  letter-spacing: -.5px;
-  line-height: 1.15;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: -.3px;
+  line-height: 1.2;
 }
 h1 { font-size: 26px; }
 h2 { font-size: 22px; }
@@ -243,7 +248,7 @@ code, kbd, samp {
 }
 .brand-name {
   font-family: var(--font-display);
-  font-style: italic;
+  font-style: normal;
   font-weight: 500;
   font-size: 22px;
   letter-spacing: -.5px;
@@ -639,7 +644,7 @@ code, kbd, samp {
 }
 .modal-title {
   font-family: var(--font-display);
-  font-style: italic;
+  font-style: normal;
   font-size: 24px;
   margin-bottom: 4px;
 }
@@ -721,7 +726,7 @@ code, kbd, samp {
 }
 .hero h2 {
   font-family: var(--font-display);
-  font-style: italic;
+  font-style: normal;
   font-weight: 500;
   font-size: 30px;
   line-height: 1.1;
@@ -743,7 +748,7 @@ code, kbd, samp {
 .section-head h2,
 .section-head h3 {
   font-family: var(--font-display);
-  font-style: italic;
+  font-style: normal;
   font-weight: 500;
   font-size: 22px;
   letter-spacing: -.4px;
@@ -865,7 +870,7 @@ code, kbd, samp {
 }
 .empty-state-title {
   font-family: var(--font-display);
-  font-style: italic;
+  font-style: normal;
   font-size: 20px;
   margin-bottom: 6px;
   color: var(--ink);
@@ -1138,7 +1143,7 @@ code, kbd, samp {
   .brand h1 {
     font-family: 'Fraunces', serif;
     font-weight: 500;
-    font-style: italic;
+    font-style: normal;
     font-size: 22px;
     letter-spacing: -.5px;
   }
@@ -1228,7 +1233,7 @@ code, kbd, samp {
   }
   .page-title {
     font-family: 'Fraunces', serif;
-    font-style: italic;
+    font-style: normal;
     font-weight: 500;
     font-size: 36px;
     letter-spacing: -1px;
@@ -1543,7 +1548,7 @@ code, kbd, samp {
   }
   .grid-head h3 {
     font-family: 'Fraunces', serif;
-    font-style: italic;
+    font-style: normal;
     font-weight: 500;
     font-size: 22px;
   }
@@ -1746,7 +1751,7 @@ code, kbd, samp {
   .detail-name {
     font-family: 'Fraunces', serif;
     font-weight: 500;
-    font-style: italic;
+    font-style: normal;
     font-size: 28px;
     letter-spacing: -.5px;
     margin: 2px 0 6px;
@@ -2064,7 +2069,7 @@ code, kbd, samp {
 .hero-eyebrow-today    { color: var(--ochre); }
 .rank-card-title {
   font-family: var(--font-display);
-  font-style: italic;
+  font-style: normal;
   font-weight: 500;
   font-size: 22px;
   margin: 8px 0 14px;
@@ -2194,7 +2199,7 @@ code, kbd, samp {
 }
 .modal-vs-title {
   font-family: var(--font-display);
-  font-style: italic;
+  font-style: normal;
   font-weight: 500;
   font-size: 28px;
   letter-spacing: -.5px;
@@ -2209,7 +2214,7 @@ code, kbd, samp {
 .empty-results-title {
   font-family: var(--font-display);
   font-size: 20px;
-  font-style: italic;
+  font-style: normal;
   margin-bottom: 6px;
 }
 .empty-state-grid {
@@ -2359,7 +2364,7 @@ code, kbd, samp {
 .scanner-status.success {
   color: #6EE065;
   font-family: var(--font-display);
-  font-style: italic;
+  font-style: normal;
   font-size: 22px;
 }
 .scanner-substatus {
@@ -2420,4 +2425,69 @@ code, kbd, samp {
   display: flex;
   gap: 4px;
   align-items: center;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   27. DATA SOURCE TOGGLE — live vs demo (comparateur)
+   ════════════════════════════════════════════════════════════ */
+
+.data-source-toggle {
+  display: inline-flex;
+  background: var(--paper-2);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 0;
+}
+.data-source-btn {
+  background: transparent;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-mute);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.data-source-btn:hover { color: var(--ink); }
+.data-source-btn.active,
+.data-source-btn[aria-pressed="true"] {
+  background: var(--terracotta);
+  color: white;
+}
+
+.api-status {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--paper-2);
+  font-size: 12px;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.api-status.loading {
+  background: #FFF3E0;
+  color: #5C4A36;
+}
+.api-status.success {
+  background: #E8F5E0;
+  color: #2D5A1A;
+}
+.api-status.error {
+  background: #FCE4DE;
+  color: #8E2D17;
+}
+.api-status .spinner {
+  width: 14px; height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

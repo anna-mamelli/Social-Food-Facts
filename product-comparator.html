@@ -6,7 +6,7 @@
 <title>Open Food Facts — Comparateur</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="comparator">
@@ -19,8 +19,8 @@
     <h1>Comparateur<small>Open Food Facts</small></h1>
   </div>
   <nav class="view-toggle" aria-label="Naviguer entre les sections">
-    <a href="index.html" data-page="hub">Hub</a>
-    <a href="https://open-food-k4r7kgh0u-stepanmereniuk-devs-projects.vercel.app/" data-page="social" rel="noopener">Social Food Facts <span aria-hidden="true">↗</span><span class="sr-only">(ouvre dans un nouvel onglet)</span></a>
+    <a href="community-hub.html" data-page="hub">Hub</a>
+    <a href="https://open-food-o2vaa5ic0-stepanmereniuk-devs-projects.vercel.app/" data-page="social" rel="noopener">Social Food Facts <span aria-hidden="true">↗</span><span class="sr-only">(ouvre dans un nouvel onglet)</span></a>
     <a href="product-comparator.html" data-page="comparator">Comparateur</a>
     <a href="https://wiki.openfoodfacts.org" target="_blank" rel="noopener" data-page="wiki">Wiki <span aria-hidden="true">↗</span><span class="sr-only">(ouvre dans un nouvel onglet)</span></a>
   </nav>
@@ -57,8 +57,15 @@
         Scanner
       </button>
     </div>
-    <div class="cat-label">Catégories populaires</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:10px;">
+      <div class="cat-label" style="margin-bottom:0;">Catégories populaires</div>
+      <div class="data-source-toggle" role="group" aria-label="Source des données">
+        <button type="button" class="data-source-btn active" id="src-live" aria-pressed="true">📡 Données live OFF</button>
+        <button type="button" class="data-source-btn" id="src-demo" aria-pressed="false">🎬 Mode démo</button>
+      </div>
+    </div>
     <div class="cat-chips" id="cat-chips"></div>
+    <div id="api-status" class="api-status" hidden></div>
   </div>
 
   <div class="winners" id="winners"></div>
@@ -164,6 +171,81 @@ const CATEGORIES = [
   { key: 'jus',      label: "Jus d'orange",     icon: '🍊' }
 ];
 
+/* ════════════════════════════════════════════════════════════
+   API OPEN FOOD FACTS — intégration live
+   ════════════════════════════════════════════════════════════ */
+const OFF_API_BASE = 'https://world.openfoodfacts.org/api/v2';
+const OFF_FIELDS = 'code,product_name,product_name_fr,brands,image_front_small_url,nutriscore_grade,ecoscore_grade,nova_group,nutriments,quantity,labels_tags,ingredients_text_fr,ingredients_text,categories_tags';
+
+// Mapping catégories app → tags OFF (en:xxx)
+const CATEGORY_TO_OFF_TAG = {
+  tartiner:  'en:spreads',
+  yaourts:   'en:plain-yogurts',
+  cereales:  'en:breakfast-cereals',
+  pizzas:    'en:frozen-pizzas',
+  sodas:     'en:carbonated-drinks',
+  pates:     'en:dried-pastas',
+  chocolats: 'en:dark-chocolates',
+  jus:       'en:orange-juices'
+};
+
+// Icônes par catégorie (utilisées comme fallback quand l'API n'a pas d'image)
+const CATEGORY_ICONS = {
+  tartiner:'🍫', yaourts:'🥛', cereales:'🥣', pizzas:'🍕',
+  sodas:'🥤', pates:'🍝', chocolats:'🍫', jus:'🍊'
+};
+
+async function fetchProductsFromOFF(categoryKey, pageSize = 12) {
+  const tag = CATEGORY_TO_OFF_TAG[categoryKey];
+  if (!tag) return [];
+  const url = `${OFF_API_BASE}/search?categories_tags=${tag}&fields=${OFF_FIELDS}&page_size=${pageSize}&sort_by=popularity_key`;
+  const res = await fetch(url, {
+    headers: {
+      'Accept': 'application/json',
+      // User-Agent personnalisé recommandé par OFF (mais non modifiable depuis le navigateur en CORS)
+    }
+  });
+  if (!res.ok) throw new Error(`OFF API a renvoyé HTTP ${res.status}`);
+  const data = await res.json();
+  return (data.products || []).map(p => mapOffProductToCard(p, categoryKey));
+}
+
+function mapOffProductToCard(p, categoryKey) {
+  const name = p.product_name_fr || p.product_name || 'Produit sans nom';
+  const brand = (p.brands || '').split(',')[0].trim() || 'Marque inconnue';
+  const code = p.code || '';
+  const nutri = (p.nutriscore_grade || '').toLowerCase();
+  const eco = (p.ecoscore_grade || '').toLowerCase();
+  const nova = p.nova_group ? Number(p.nova_group) : null;
+  const labels = (p.labels_tags || []).map(l => l.replace(/^[a-z]{2}:/, ''));
+  const tags = [];
+  if (labels.some(l => /^(organic|bio|ab-agriculture-biologique)$/.test(l))) tags.push('bio');
+  if (labels.some(l => /palm-oil-free|sans-huile-de-palme/.test(l))) tags.push('no-palm');
+  if (labels.some(l => /^vegan$/.test(l))) tags.push('vegan');
+  const nutriments = p.nutriments || {};
+  return {
+    id: 'off-' + code,
+    brand,
+    name,
+    barcode: code,
+    image: p.image_front_small_url || null,
+    icon: CATEGORY_ICONS[categoryKey] || '🛒',
+    nutri: ['a','b','c','d','e'].includes(nutri) ? nutri : 'c',
+    eco:   ['a','b','c','d','e'].includes(eco) ? eco : 'c',
+    nova:  [1,2,3,4].includes(nova) ? nova : 4,
+    priceAvg: 0, priceMin: 0, priceMax: 0, deltaPct: 0,
+    unit: p.quantity || '—',
+    tags,
+    priceTrend: [],
+    stores: [],
+    ingredients: p.ingredients_text_fr || p.ingredients_text || '<i>Liste d\'ingrédients non renseignée</i>',
+    sugar: Number(nutriments['sugars_100g'] || 0).toFixed(1),
+    fat:   Number(nutriments['fat_100g'] || 0).toFixed(1),
+    kcal:  Math.round(nutriments['energy-kcal_100g'] || nutriments['energy-kcal'] || 0),
+    fromOFF: true
+  };
+}
+
 const PRODUCTS_BY_CAT = {
   tartiner: [
     { id:'t1', brand:'Ferrero',           name:'Nutella',                              barcode:'3017624010701', icon:'🍫', nutri:'e', eco:'d', nova:4, priceAvg:4.20, priceMin:3.50, priceMax:5.10, deltaPct:12, unit:'400g', tags:[], priceTrend:[3.75,3.80,3.85,3.90,4.00,4.10,4.15,4.20,4.20,4.20,4.25,4.20], stores:[{n:'Lidl',p:3.50},{n:'Leclerc',p:3.95},{n:'Carrefour',p:4.20},{n:'Monoprix',p:5.10}], ingredients:'Sucre, <span class="palm">huile de palme</span>, NOISETTES (13%), cacao maigre (7,4%), LAIT écrémé en poudre (6,6%), LACTOSÉRUM en poudre, émulsifiants : lécithines [SOJA], vanilline.', sugar:56.3, fat:30.9, kcal:539 },
@@ -230,7 +312,52 @@ const NOVA_CAPTIONS = {
 };
 const TAG_LABELS = { bio:'Bio', 'no-palm':'Sans huile palme', vegan:'Vegan' };
 
-function getProducts() { return PRODUCTS_BY_CAT[State.category] || []; }
+/* ════════════════════════════════════════════════════════════
+   ÉTAT API LIVE — produits fetchés depuis OFF
+   ════════════════════════════════════════════════════════════ */
+let LIVE_PRODUCTS_BY_CAT = {};      // cache des produits fetchés
+let DATA_SOURCE = 'live';           // 'live' ou 'demo'
+
+function getProducts() {
+  if (DATA_SOURCE === 'live') {
+    return LIVE_PRODUCTS_BY_CAT[State.category] || [];
+  }
+  return PRODUCTS_BY_CAT[State.category] || [];
+}
+
+function setApiStatus(state, message) {
+  const el = document.getElementById('api-status');
+  if (!el) return;
+  if (!state) { el.hidden = true; el.innerHTML = ''; return; }
+  el.hidden = false;
+  el.className = 'api-status ' + state;
+  if (state === 'loading') {
+    el.innerHTML = `<span class="spinner" aria-hidden="true"></span><span>${message}</span>`;
+  } else {
+    el.innerHTML = `<span>${message}</span>`;
+  }
+}
+
+async function ensureLiveData(categoryKey) {
+  if (LIVE_PRODUCTS_BY_CAT[categoryKey]) return; // déjà en cache
+  setApiStatus('loading', `Chargement des produits depuis l'API Open Food Facts…`);
+  try {
+    const products = await fetchProductsFromOFF(categoryKey, 12);
+    if (!products.length) throw new Error('Aucun produit retourné par l\'API');
+    LIVE_PRODUCTS_BY_CAT[categoryKey] = products;
+    setApiStatus('success', `✓ ${products.length} produits chargés depuis l'API OFF (cache local actif)`);
+    setTimeout(() => setApiStatus(null), 3000);
+  } catch (err) {
+    console.error('[OFF API] erreur :', err);
+    setApiStatus('error', `⚠ Impossible de joindre l'API OFF — bascule en mode démo. (${err.message})`);
+    DATA_SOURCE = 'demo';
+    document.getElementById('src-live')?.setAttribute('aria-pressed', 'false');
+    document.getElementById('src-live')?.classList.remove('active');
+    document.getElementById('src-demo')?.setAttribute('aria-pressed', 'true');
+    document.getElementById('src-demo')?.classList.add('active');
+    setTimeout(() => setApiStatus(null), 6000);
+  }
+}
 function getCatLabel(key) { return CATEGORIES.find(c => c.key === key)?.label || key; }
 
 function filterAndSort() {
@@ -269,13 +396,14 @@ function filterAndSort() {
 }
 
 function pricePerKg(p) {
+  if (!p.priceAvg) return '—';
   const m = p.unit.match(/(\d+)([gx]\d+g?)?/);
   let grams = 100;
-  if (p.unit.includes('×')) {
+  if (p.unit && p.unit.includes('×')) {
     const [count, weight] = p.unit.split('×');
     grams = parseInt(count) * parseInt(weight);
-  } else {
-    grams = parseInt(p.unit.replace(/\D/g,''));
+  } else if (p.unit) {
+    grams = parseInt(p.unit.replace(/\D/g,'')) || 100;
   }
   return (p.priceAvg / grams * 1000).toFixed(2);
 }
@@ -291,15 +419,23 @@ function renderCategories() {
     </button>
   `).join('');
   el.querySelectorAll('[data-cat]').forEach(b => {
-    b.addEventListener('click', () => {
-      if (!PRODUCTS_BY_CAT[b.dataset.cat]) {
-        toast(`🚧 Catégorie ${b.textContent.trim()} à venir`);
+    b.addEventListener('click', async () => {
+      const catKey = b.dataset.cat;
+      // En mode démo, on n'a que ce qu'on a en mock
+      if (DATA_SOURCE === 'demo' && !PRODUCTS_BY_CAT[catKey]) {
+        toast(`🚧 Catégorie ${b.textContent.trim()} en mode démo : pas de données mock`);
         return;
       }
-      State.category = b.dataset.cat;
+      // Toutes les catégories sont disponibles via l'API live
+      State.category = catKey;
       State.brand = null;
-      document.getElementById('grid-title').textContent = getCatLabel(b.dataset.cat);
+      document.getElementById('grid-title').textContent = getCatLabel(catKey);
       renderCategories();
+
+      // En mode live, fetch si pas en cache
+      if (DATA_SOURCE === 'live') {
+        await ensureLiveData(catKey);
+      }
       renderAll();
     });
   });
@@ -309,7 +445,66 @@ function renderWinners() {
   const list = getProducts();
   if (!list.length) { document.getElementById('winners').innerHTML = ''; return; }
 
+  // En mode live, on n'a pas de prix — on ne montre que "meilleur Nutri-Score"
+  const hasPrices = list.some(p => p.priceAvg > 0);
+
   const bestNutri = [...list].sort((a,b) => NS_RANK[a.nutri] - NS_RANK[b.nutri])[0];
+
+  if (!hasPrices) {
+    // Mode live : un seul winner mis en avant
+    const bestEco = [...list].sort((a,b) => NS_RANK[a.eco] - NS_RANK[b.eco])[0];
+    const bestNova = [...list].sort((a,b) => a.nova - b.nova)[0];
+    document.getElementById('winners').innerHTML = `
+      <div class="winner nutri winner-card-clickable" onclick="openDetail('${bestNutri.id}')">
+        <div class="winner-eyebrow"><b>🏆</b> Meilleur Nutri-Score · ${bestNutri.nutri.toUpperCase()}</div>
+        <div class="winner-product">
+          <div class="product-thumb">${bestNutri.image ? `<img src="${bestNutri.image}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:8px;">` : bestNutri.icon}</div>
+          <div class="winner-info">
+            <div class="winner-brand">${bestNutri.brand}</div>
+            <div class="winner-name">${bestNutri.name}</div>
+            <div class="winner-stats">
+              <span class="nutri-badge ${bestNutri.nutri}">${bestNutri.nutri.toUpperCase()}</span>
+              <span class="eco-badge ${bestNutri.eco}">${bestNutri.eco.toUpperCase()}</span>
+              <span class="nova-badge n${bestNutri.nova}">${bestNutri.nova}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="winner value winner-card-clickable" onclick="openDetail('${bestEco.id}')">
+        <div class="winner-eyebrow"><b>🌱</b> Meilleur Eco-Score · ${bestEco.eco.toUpperCase()}</div>
+        <div class="winner-product">
+          <div class="product-thumb">${bestEco.image ? `<img src="${bestEco.image}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:8px;">` : bestEco.icon}</div>
+          <div class="winner-info">
+            <div class="winner-brand">${bestEco.brand}</div>
+            <div class="winner-name">${bestEco.name}</div>
+            <div class="winner-stats">
+              <span class="nutri-badge ${bestEco.nutri}">${bestEco.nutri.toUpperCase()}</span>
+              <span class="eco-badge ${bestEco.eco}">${bestEco.eco.toUpperCase()}</span>
+              <span class="nova-badge n${bestEco.nova}">${bestEco.nova}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="winner price winner-card-clickable" onclick="openDetail('${bestNova.id}')">
+        <div class="winner-eyebrow"><b>🥗</b> Moins transformé · NOVA ${bestNova.nova}</div>
+        <div class="winner-product">
+          <div class="product-thumb">${bestNova.image ? `<img src="${bestNova.image}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:8px;">` : bestNova.icon}</div>
+          <div class="winner-info">
+            <div class="winner-brand">${bestNova.brand}</div>
+            <div class="winner-name">${bestNova.name}</div>
+            <div class="winner-stats">
+              <span class="nutri-badge ${bestNova.nutri}">${bestNova.nutri.toUpperCase()}</span>
+              <span class="eco-badge ${bestNova.eco}">${bestNova.eco.toUpperCase()}</span>
+              <span class="nova-badge n${bestNova.nova}">${bestNova.nova}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Mode mock avec prix : winners classiques
   const bestPrice = [...list].sort((a,b) => a.priceAvg - b.priceAvg)[0];
   const bestValue = [...list].sort((a,b) => ((6-NS_RANK[b.nutri])/b.priceAvg) - ((6-NS_RANK[a.nutri])/a.priceAvg))[0];
 
@@ -374,9 +569,27 @@ function renderProductCard(p) {
   const palmTag = !p.tags.includes('no-palm') && (p.ingredients||'').includes('palm')
     ? '<span class="ptag palm">⚠ Huile de palme</span>' : '';
 
+  // Bloc prix (mock seulement, pas pour les produits live OFF qui n'ont pas de prix)
+  const priceBlock = p.fromOFF ? '' : `
+        <div class="product-price-row">
+          <div class="product-price-info">
+            <span class="product-price-main">${p.priceAvg.toFixed(2)}€</span>
+            <span class="product-price-unit">soit ${pricePerKg(p)}€/kg</span>
+          </div>
+          <div class="product-price-meta">
+            <b>${p.priceMin.toFixed(2)}€</b>
+            chez ${p.stores[0] ? p.stores[0].n : '—'}
+            <div class="product-price-delta">${p.deltaPct>0?'↗':'↘'} ${p.deltaPct}% / 12 mois</div>
+          </div>
+        </div>`;
+
+  const offBadge = p.fromOFF
+    ? '<div class="ptag" style="background:#FFF3E0;color:#FF8714;border-color:transparent;margin-top:6px;display:inline-block;">📡 Données OFF live</div>'
+    : '';
+
   return `
     <div class="product-card ${isSelected?'selected':''}" data-id="${p.id}">
-      <div class="product-thumb-lg">${p.icon}</div>
+      <div class="product-thumb-lg">${p.image ? `<img src="${p.image}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:contain;border-radius:10px;">` : p.icon}</div>
       <div class="product-body">
         <div class="product-brand">${p.brand}</div>
         <div class="product-name">${p.name}</div>
@@ -387,17 +600,7 @@ function renderProductCard(p) {
           <span class="score-label">${p.unit}</span>
         </div>
         <div class="product-tags">${tagsHtml}${palmTag}</div>
-        <div class="product-price-row">
-          <div class="product-price-info">
-            <span class="product-price-main">${p.priceAvg.toFixed(2)}€</span>
-            <span class="product-price-unit">soit ${pricePerKg(p)}€/kg</span>
-          </div>
-          <div class="product-price-meta">
-            <b>${p.priceMin.toFixed(2)}€</b>
-            chez ${p.stores[0].n}
-            <div class="product-price-delta">${p.deltaPct>0?'↗':'↘'} ${p.deltaPct}% / 12 mois</div>
-          </div>
-        </div>
+        ${offBadge}${priceBlock}
       </div>
     </div>
   `;
@@ -472,7 +675,7 @@ function updateCompareUI() {
    DETAIL MODAL
    ════════════════════════════════════════════════════════════ */
 function openDetail(id) {
-  const products = Object.values(PRODUCTS_BY_CAT).flat();
+  const products = [...Object.values(PRODUCTS_BY_CAT).flat(), ...Object.values(LIVE_PRODUCTS_BY_CAT).flat()];
   const p = products.find(x => x.id === id);
   if (!p) return;
   const isSelected = State.selected.has(id);
@@ -519,6 +722,18 @@ function openDetail(id) {
       </div>
     </div>
 
+    ${p.fromOFF ? `
+    <div class="detail-section">
+      <div class="detail-section-title">📡 Données Open Food Facts</div>
+      <div style="background:var(--paper-2);border-radius:10px;padding:14px;font-size:12.5px;line-height:1.5;">
+        Ce produit a été chargé directement depuis l'<b>API Open Food Facts</b>.
+        Les prix ne sont pas disponibles pour ce produit dans cette démo (intégration <b>Open Prices</b> à venir).
+        <div style="margin-top:10px;font-size:11.5px;color:var(--ink-mute);">
+          Code-barres : <code>${p.barcode}</code> · API : <code>world.openfoodfacts.org/api/v2</code>
+        </div>
+      </div>
+    </div>
+    ` : `
     <div class="detail-section">
       <div class="detail-section-title">💰 Prix · 12 derniers mois</div>
       <div class="price-evo">
@@ -540,6 +755,7 @@ function openDetail(id) {
         `).join('')}
       </div>
     </div>
+    `}
 
     <div class="detail-section">
       <div class="detail-section-title">🧪 Composition · valeurs pour 100g</div>
@@ -582,7 +798,7 @@ function openVsModal() {
     toast('Sélectionnez au moins 2 produits (Ctrl+clic ou ⊕ Comparer)');
     return;
   }
-  const products = Object.values(PRODUCTS_BY_CAT).flat();
+  const products = [...Object.values(PRODUCTS_BY_CAT).flat(), ...Object.values(LIVE_PRODUCTS_BY_CAT).flat()];
   const selected = [...State.selected].map(id => products.find(p => p.id === id)).filter(Boolean);
 
   // Compute winners per criterion
@@ -752,9 +968,32 @@ function toast(msg) {
 /* ════════════════════════════════════════════════════════════
    INIT
    ════════════════════════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   loadState();
   renderCategories();
+
+  // Toggle live / demo
+  document.getElementById('src-live').addEventListener('click', async () => {
+    DATA_SOURCE = 'live';
+    document.getElementById('src-live').setAttribute('aria-pressed', 'true');
+    document.getElementById('src-live').classList.add('active');
+    document.getElementById('src-demo').setAttribute('aria-pressed', 'false');
+    document.getElementById('src-demo').classList.remove('active');
+    await ensureLiveData(State.category);
+    renderAll();
+  });
+  document.getElementById('src-demo').addEventListener('click', () => {
+    DATA_SOURCE = 'demo';
+    document.getElementById('src-demo').setAttribute('aria-pressed', 'true');
+    document.getElementById('src-demo').classList.add('active');
+    document.getElementById('src-live').setAttribute('aria-pressed', 'false');
+    document.getElementById('src-live').classList.remove('active');
+    setApiStatus(null);
+    renderAll();
+  });
+
+  // Booter en mode live par défaut : fetch la catégorie initiale
+  await ensureLiveData(State.category);
   renderAll();
 
   document.getElementById('search').addEventListener('input', e => {
